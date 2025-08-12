@@ -1,21 +1,4 @@
-# 🚀 **React Pomodoro Timer** ⏳
-
-A **simple yet powerful Pomodoro timer** built with [React](https://react.dev/) and [Vite](https://vitejs.dev/). Stay productive with **customizable cycles, sound alerts, and progress tracking!**
-
-## 🎯 **Features**
-
-✅ **Predefined Pomodoro Configuration** – Work & break sessions set up for you!\
-🔔 **Sound Alerts** – Never miss your break or work session!\
-⚙️ **Customizable Settings** – Adjust Pomodoro cycle durations as needed.\
-🔐 **Authentication** – Track your sessions across devices.\
-🗄 **Cloud Sync** – Save progress in a database.\
-
-### 🚀 **Upcoming Features**
-
-📊 **Statistics Dashboard** – See your productivity insights.\
-📱 **PWA Support** – Use the app offline like a native app.
-
----
+# 🚀 **Clear Zone** ⏳
 
 ## 🛠 **Technologies Used**
 
