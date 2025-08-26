@@ -16,6 +16,10 @@ export const theme = {
     base: '1rem',
     xlg: '2rem',
   },
+  colors: {
+    white: '#ffffffde',
+    lightBlue: '#d8e0ebff',
+  },
 };
 
 export type ThemeType = typeof theme;

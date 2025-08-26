@@ -5,6 +5,8 @@ import { NavLink } from 'react-router';
 export const LayoutContainer = styled.div`
   display: flex;
   height: 100%;
+  flex-direction: column;
+  color: black;
 
   @media (max-width: 768px) {
     width: 100%;
@@ -13,24 +15,28 @@ export const LayoutContainer = styled.div`
   }
 `;
 
-export const Sidebar = styled.aside(({ theme }) => ({
-  backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  padding: `${theme.spacing.sm} ${theme.spacing.md} ${theme.spacing.lg}`,
+export const Navigation = styled.nav(({ theme }) => ({
+  backgroundColor: '#d8e0ebff',
+  height: 75,
+  borderBottom: '1px solid rgba(218, 218, 218, 1)',
+  padding: `0px ${theme.spacing.lg}`,
+  display: 'flex',
+  justifyContent: 'space-between',
+  alignItems: 'center',
 }));
 
 export const StyledNavLink = styled(NavLink)(({ theme }) => ({
   padding: theme.spacing.xxs,
-  borderRadius: theme.radius.small,
-  marginBottom: theme.spacing.sm,
-  display: 'block',
+  height: 50,
+  alignItems: 'center',
+  display: 'flex',
+  boxSizing: 'border-box',
+  borderBottom: '2px solid transparent',
   '&.active': {
-    backgroundColor: 'cadetblue',
+    borderBottom: '2px solid black',
   },
   '&:hover': {
-    backgroundColor: 'cadetblue',
-  },
-  '@media (max-width: 768px)': {
-    marginBottom: 'unset',
+    borderBottom: '2px solid black',
   },
 }));
 

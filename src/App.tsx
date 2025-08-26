@@ -6,7 +6,6 @@ import { Navigate, Route, Routes } from 'react-router';
 
 import { Toaster } from '@/components/ui/toaster';
 
-import PomodoroPage from './pages/pomodoro/pomodoro-page';
 import Layout from './shared/components/layout/layout-component';
 import ProtectedRoute from './shared/components/protected-route/protected-route';
 import { AuthProvider } from './shared/context/auth-provider';
@@ -26,7 +25,6 @@ function App() {
           <Route path="register" element={<RegisterPage />} />
 
           <Route path="/" element={<Layout />}>
-            <Route index element={<PomodoroPage />} />
             <Route element={<ProtectedRoute />}>
               <Route path="settings" element={<SettingsPage />} />
             </Route>

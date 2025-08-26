@@ -1,10 +1,9 @@
-import { Icon } from '@chakra-ui/react';
+import { HStack } from '@chakra-ui/react';
 import { useEffect, useMemo } from 'react';
-import { FaHome } from 'react-icons/fa';
-import { IoMdLogIn, IoMdLogOut } from 'react-icons/io';
-import { IoSettingsSharp } from 'react-icons/io5';
 import { Outlet } from 'react-router';
 
+import userLogo from '@/assets/images/user.svg';
+import { Logo } from '@/shared/components/logo/Logo';
 import { ACCESS_TOKEN_KEY } from '@/shared/constants/tokens';
 import { useAuth } from '@/shared/context/auth-context';
 import { getUser, logOut } from '@/store/slices/user-slice';
@@ -13,16 +12,13 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   Content,
   LayoutContainer,
-  NavigationMenu,
-  Sidebar,
+  Navigation,
   StyledNavLink,
 } from './styled-components';
 
 const _navigation = [
-  { link: '/', icon: <FaHome /> },
-  { link: '/settings', icon: <IoSettingsSharp />, isProtected: true },
-  { link: '/sign-out', icon: <IoMdLogOut />, isProtected: true },
-  { link: '/sign-in', icon: <IoMdLogIn />, isHiddenForAuthorized: true },
+  { link: '/', name: 'Dashboard' },
+  { link: '/settings', name: 'Settings', isProtected: true },
 ];
 
 const Layout = () => {
@@ -41,7 +37,7 @@ const Layout = () => {
       return _navigation.filter((item) => !item.isProtected);
     }
 
-    return _navigation.filter((item) => !item.isHiddenForAuthorized);
+    return _navigation;
   }, [user]);
 
   const handleLogOut = () => {
@@ -63,29 +59,38 @@ const Layout = () => {
       }
     };
 
-    return navigation.map(({ link, icon }) => (
-      <li key={link}>
-        <StyledNavLink
-          to={link}
-          onClick={() => {
-            handleLinkClick(link);
-          }}
-        >
-          <Icon fontSize="4xl" color="white.700">
-            {icon}
-          </Icon>
-        </StyledNavLink>
-      </li>
+    return navigation.map(({ link, name }) => (
+      <StyledNavLink
+        to={link}
+        key={link}
+        onClick={() => {
+          handleLinkClick(link);
+        }}
+      >
+        {name}
+      </StyledNavLink>
     ));
   };
 
   return (
     <LayoutContainer>
-      <Sidebar>
-        <nav>
-          <NavigationMenu>{getNavigationMenu()}</NavigationMenu>
-        </nav>
-      </Sidebar>
+      <Navigation>
+        <HStack>
+          <Logo />
+          <h1 style={{ color: 'black', fontWeight: 'bold', fontSize: 28 }}>
+            Clear Zone
+          </h1>
+        </HStack>
+
+        <HStack>{getNavigationMenu()}</HStack>
+
+        {!!user && (
+          <HStack>
+            <div>{user.email}</div>
+            <img src={userLogo} alt="user logo" style={{ height: 25 }} />
+          </HStack>
+        )}
+      </Navigation>
 
       <Content>
         <Outlet />

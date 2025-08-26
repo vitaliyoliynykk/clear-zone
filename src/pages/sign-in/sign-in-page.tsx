@@ -11,10 +11,12 @@ import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router';
 
+import { Logo } from '@/shared/components/logo/Logo';
 import { ACCESS_TOKEN_KEY } from '@/shared/constants/tokens';
 import { useAuth } from '@/shared/context/auth-context';
 import { signIn } from '@/store/slices/user-slice';
 import { useAppDispatch } from '@/store/store';
+import { theme } from '@/utils/theme';
 
 const SignInPage: FC = () => {
   const navigate = useNavigate();
@@ -55,19 +57,29 @@ const SignInPage: FC = () => {
       alignItems="center"
       justifyContent="center"
       height="100vh"
-      bg="rgb(36 36 36)"
+      bg={theme.colors.lightBlue}
     >
       <Box
-        bg="white"
+        bg={theme.colors.white}
         p={6}
         m="0 1.5rem"
         borderRadius="lg"
-        boxShadow="lg"
+        boxShadow="md"
         width="400px"
         textAlign="center"
       >
-        <Heading size="4xl" mb={4} color="black">
-          Flow Track
+        <Heading
+          size="4xl"
+          color="black"
+          mb={4}
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+          }}
+        >
+          <Logo />
+          Clear Zone
         </Heading>
 
         <VStack>
