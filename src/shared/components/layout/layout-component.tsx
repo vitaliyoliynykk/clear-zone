@@ -1,4 +1,4 @@
-import { HStack } from '@chakra-ui/react';
+import { HStack, Menu, Portal } from '@chakra-ui/react';
 import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router';
 
@@ -87,7 +87,22 @@ const Layout = () => {
         {!!user && (
           <HStack>
             <div>{user.email}</div>
-            <img src={userLogo} alt="user logo" style={{ height: 25 }} />
+            <Menu.Root>
+              <Menu.Trigger asChild>
+                <img
+                  src={userLogo}
+                  alt="user logo"
+                  style={{ height: 25, cursor: 'pointer' }}
+                />
+              </Menu.Trigger>
+              <Portal>
+                <Menu.Positioner>
+                  <Menu.Content>
+                    <Menu.Item value="new-txt-a">Log out</Menu.Item>
+                  </Menu.Content>
+                </Menu.Positioner>
+              </Portal>
+            </Menu.Root>
           </HStack>
         )}
       </Navigation>
