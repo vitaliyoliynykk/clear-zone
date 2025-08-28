@@ -18,7 +18,7 @@ if (root) {
   createRoot(root).render(
     <StrictMode>
       <BrowserRouter>
-        <ChakraProvider>
+        <ChakraProvider enableSystem={false}>
           <Provider store={setupStore()}>
             <ThemeProvider theme={theme}>
               <App />

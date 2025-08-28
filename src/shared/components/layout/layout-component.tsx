@@ -17,7 +17,8 @@ import {
 } from './styled-components';
 
 const _navigation = [
-  { link: '/', name: 'Dashboard' },
+  { link: '/', name: 'Devices' },
+  { link: '/dashboard', name: 'Dashboard' },
   { link: '/settings', name: 'Settings', isProtected: true },
 ];
 
@@ -53,20 +54,8 @@ const Layout = () => {
   };
 
   const getNavigationMenu = () => {
-    const handleLinkClick = (link: string) => {
-      if (link === '/sign-out') {
-        handleLogOut();
-      }
-    };
-
     return navigation.map(({ link, name }) => (
-      <StyledNavLink
-        to={link}
-        key={link}
-        onClick={() => {
-          handleLinkClick(link);
-        }}
-      >
+      <StyledNavLink to={link} key={link}>
         {name}
       </StyledNavLink>
     ));
@@ -98,7 +87,14 @@ const Layout = () => {
               <Portal>
                 <Menu.Positioner>
                   <Menu.Content>
-                    <Menu.Item value="new-txt-a">Log out</Menu.Item>
+                    <Menu.Item
+                      value="new-txt-a"
+                      onClick={() => {
+                        handleLogOut();
+                      }}
+                    >
+                      Log out
+                    </Menu.Item>
                   </Menu.Content>
                 </Menu.Positioner>
               </Portal>

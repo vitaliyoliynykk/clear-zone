@@ -13,6 +13,8 @@ import { AuthProvider } from './shared/context/auth-provider';
 const SettingsPage = lazy(() => import('./pages/settings/settings-page'));
 const SignInPage = lazy(() => import('./pages/sign-in/sign-in-page'));
 const RegisterPage = lazy(() => import('./pages/register/register-page'));
+const DashboardPage = lazy(() => import('./pages/dashboard/dashboard-page'));
+const DevicesPage = lazy(() => import('./pages/devices/devices-page'));
 
 function App() {
   return (
@@ -26,6 +28,8 @@ function App() {
 
           <Route path="/" element={<Layout />}>
             <Route element={<ProtectedRoute />}>
+              <Route path="/" element={<DevicesPage />} />
+              <Route path="dashboard" element={<DashboardPage />} />
               <Route path="settings" element={<SettingsPage />} />
             </Route>
           </Route>
