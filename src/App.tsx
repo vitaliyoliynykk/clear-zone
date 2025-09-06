@@ -26,8 +26,8 @@ function App() {
           <Route path="sign-in" element={<SignInPage />} />
           <Route path="register" element={<RegisterPage />} />
 
-          <Route path="/" element={<Layout />}>
-            <Route element={<ProtectedRoute />}>
+          <Route element={<ProtectedRoute />}>
+            <Route path="/" element={<Layout />}>
               <Route path="/" element={<DevicesPage />} />
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="settings" element={<SettingsPage />} />
