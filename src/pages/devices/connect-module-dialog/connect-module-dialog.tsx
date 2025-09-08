@@ -1,11 +1,35 @@
-import { Button, Dialog, Heading, Portal } from '@chakra-ui/react';
+import {
+  Button,
+  ButtonGroup,
+  Dialog,
+  Heading,
+  Portal,
+  Steps,
+} from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
+
+import FindModuleComponent from '../connection-steps/find-module/find-module-component';
+
+const steps = [
+  {
+    title: 'Connect to a Module',
+    Component: FindModuleComponent,
+  },
+  {
+    title: 'Find a Wi-Fi network',
+    Component: FindModuleComponent,
+  },
+  {
+    title: 'Connect a Module',
+    Component: FindModuleComponent,
+  },
+];
 
 export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
   return (
-    <Dialog.Root placement="center">
+    <Dialog.Root placement="center" size="xl">
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
 
       <Portal>
@@ -17,19 +41,38 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
             </Dialog.Header>
 
             <Dialog.Body>
-              <p>1. Connect via bluetooth to the module</p>
-              <p>2. Connect the module to Wi-Fi</p>
+              <Steps.Root defaultStep={0} count={steps.length} variant="subtle">
+                <Steps.List>
+                  {steps.map((step, index) => (
+                    <Steps.Item
+                      style={{ gap: 12 }}
+                      key={index}
+                      index={index}
+                      title={step.title}
+                    >
+                      <Steps.Indicator />
+                      <Steps.Title>{step.title}</Steps.Title>
+                      <Steps.Separator />
+                    </Steps.Item>
+                  ))}
+                </Steps.List>
+
+                {steps.map((step, index) => (
+                  <Steps.Content key={index} index={index}>
+                    <step.Component />
+                  </Steps.Content>
+                ))}
+
+                <ButtonGroup size="sm" variant="outline">
+                  <Steps.PrevTrigger asChild>
+                    <Button>Prev</Button>
+                  </Steps.PrevTrigger>
+                  <Steps.NextTrigger asChild>
+                    <Button>Next</Button>
+                  </Steps.NextTrigger>
+                </ButtonGroup>
+              </Steps.Root>
             </Dialog.Body>
-
-            <Dialog.Footer display="flex" justifyContent="flex-end" gap="4">
-              <Dialog.ActionTrigger asChild>
-                <Button variant="outline">Cancel</Button>
-              </Dialog.ActionTrigger>
-
-              <Button type="submit" colorScheme="blue">
-                Connect
-              </Button>
-            </Dialog.Footer>
           </Dialog.Content>
         </Dialog.Positioner>
       </Portal>
