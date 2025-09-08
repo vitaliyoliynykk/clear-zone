@@ -7,8 +7,15 @@ import {
   Steps,
 } from '@chakra-ui/react';
 import { FC, ReactNode } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
-import FindModuleComponent from '../connection-steps/find-module/find-module-component';
+import FindModuleComponent from '@/pages/devices/connection-steps/find-module/find-module-component';
+import FindNetworkComponent from '@/pages/devices/connection-steps/find-network/find-network-component';
+import {
+  nextStep,
+  resetConnectionState,
+  selectCurrentStep,
+} from '@/store/slices/connect-module.slice';
 
 const steps = [
   {
@@ -17,7 +24,7 @@ const steps = [
   },
   {
     title: 'Find a Wi-Fi network',
-    Component: FindModuleComponent,
+    Component: FindNetworkComponent,
   },
   {
     title: 'Connect a Module',
@@ -28,8 +35,16 @@ const steps = [
 export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
+  const dispatch = useDispatch();
+  const currentStep = useSelector(selectCurrentStep);
+
   return (
-    <Dialog.Root placement="center" size="xl">
+    <Dialog.Root
+      placement="center"
+      size="xl"
+      unmountOnExit={true}
+      onExitComplete={() => dispatch(resetConnectionState())}
+    >
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
 
       <Portal>
@@ -41,7 +56,12 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
             </Dialog.Header>
 
             <Dialog.Body>
-              <Steps.Root defaultStep={0} count={steps.length} variant="subtle">
+              <Steps.Root
+                step={currentStep}
+                defaultStep={0}
+                count={steps.length}
+                variant="subtle"
+              >
                 <Steps.List>
                   {steps.map((step, index) => (
                     <Steps.Item
@@ -64,12 +84,9 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
                 ))}
 
                 <ButtonGroup size="sm" variant="outline">
-                  <Steps.PrevTrigger asChild>
-                    <Button>Prev</Button>
-                  </Steps.PrevTrigger>
-                  <Steps.NextTrigger asChild>
-                    <Button>Next</Button>
-                  </Steps.NextTrigger>
+                  <Button>Prev</Button>
+
+                  <Button onClick={() => dispatch(nextStep())}>Next</Button>
                 </ButtonGroup>
               </Steps.Root>
             </Dialog.Body>
