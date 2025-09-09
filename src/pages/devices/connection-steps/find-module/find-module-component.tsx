@@ -1,5 +1,5 @@
-import { Button } from '@chakra-ui/react';
-import { FC } from 'react';
+import { Button, Spinner } from '@chakra-ui/react';
+import { FC, useState } from 'react';
 import { PiBluetoothLight } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -10,13 +10,17 @@ import {
   disconnectDevice,
   selectConnectedDevice,
 } from '@/store/slices/connect-module.slice';
+import { theme } from '@/utils/theme';
 
 const FindModuleComponent: FC = () => {
   const dispatch = useDispatch();
   const connectedDevice = useSelector(selectConnectedDevice);
+  const [connectionModalIsOpen, setConnectionModalIsOpen] = useState(false);
 
   const connectToDevice = async () => {
     try {
+      setConnectionModalIsOpen(true);
+
       if (connectedDevice) {
         connectedDevice.gatt?.disconnect();
         dispatch(disconnectDevice());
@@ -39,7 +43,21 @@ const FindModuleComponent: FC = () => {
       });
 
       disconnectDevice();
+    } finally {
+      setConnectionModalIsOpen(false);
     }
+  };
+
+  const displayConnectedDevice = () => {
+    if (connectionModalIsOpen) {
+      return <Spinner />;
+    }
+
+    if (connectedDevice) {
+      return <>Connected: {connectedDevice.name}</>;
+    }
+
+    return <>Find a device</>;
   };
 
   return (
@@ -48,11 +66,9 @@ const FindModuleComponent: FC = () => {
         <PiBluetoothLight />
         Find a Module
       </Button>
-      {connectedDevice ? (
-        <div style={{ padding: 12 }}>Connected: {connectedDevice.name}</div>
-      ) : (
-        <div style={{ padding: 12 }}>Find a device</div>
-      )}
+      <div style={{ padding: theme.spacing.sm }}>
+        {displayConnectedDevice()}
+      </div>
     </ModalStepBody>
   );
 };
