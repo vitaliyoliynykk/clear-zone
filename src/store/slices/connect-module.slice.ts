@@ -27,11 +27,16 @@ const connectModuleSlice = createSlice({
     connectDevice: (state, action: PayloadAction<BluetoothDevice>) => {
       state.connectedDevice = action.payload;
     },
-    selectNetwork: (state, network: PayloadAction<Record<string, unknown>>) => {
-      state.selectedNetwork = network;
+    selectNetwork: (state, action: PayloadAction<Record<string, unknown>>) => {
+      state.selectedNetwork = action.payload;
     },
     nextStep: (state) => {
       state.currentStep += 1 % 3;
+    },
+    prevStep: (state) => {
+      if (state.currentStep > 0) {
+        state.currentStep -= 1;
+      }
     },
     disconnectDevice: (state) => {
       state.connectedDevice = null;
@@ -48,6 +53,7 @@ const {
   selectNetwork,
   nextStep,
   resetConnectionState,
+  prevStep,
 } = connectModuleSlice.actions;
 
 export {
@@ -55,6 +61,7 @@ export {
   connectModuleReducer,
   disconnectDevice,
   nextStep,
+  prevStep,
   resetConnectionState,
   selectConnectedDevice,
   selectCurrentNetwork,

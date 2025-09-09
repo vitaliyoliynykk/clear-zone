@@ -9,6 +9,7 @@ import {
 import { FC, ReactNode } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import ConnectNetworkComponent from '@/pages/devices/connection-steps/connect-network/connect-network-component';
 import FindModuleComponent from '@/pages/devices/connection-steps/find-module/find-module-component';
 import FindNetworkComponent from '@/pages/devices/connection-steps/find-network/find-network-component';
 import {
@@ -28,7 +29,7 @@ const steps = [
   },
   {
     title: 'Connect a Module',
-    Component: FindModuleComponent,
+    Component: ConnectNetworkComponent,
   },
 ];
 

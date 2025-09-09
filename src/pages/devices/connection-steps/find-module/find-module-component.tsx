@@ -1,9 +1,10 @@
-import { Button, VStack } from '@chakra-ui/react';
+import { Button } from '@chakra-ui/react';
 import { FC } from 'react';
 import { PiBluetoothLight } from 'react-icons/pi';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { toaster } from '@/components/ui/toaster';
+import { ModalStepBody } from '@/pages/devices/connection-steps/styled-components';
 import {
   connectDevice,
   disconnectDevice,
@@ -42,7 +43,7 @@ const FindModuleComponent: FC = () => {
   };
 
   return (
-    <VStack>
+    <ModalStepBody justifyContent="center">
       <Button variant="subtle" size="lg" onClick={() => void connectToDevice()}>
         <PiBluetoothLight />
         Find a Module
@@ -52,7 +53,7 @@ const FindModuleComponent: FC = () => {
       ) : (
         <div style={{ padding: 12 }}>Find a device</div>
       )}
-    </VStack>
+    </ModalStepBody>
   );
 };
 

@@ -3,8 +3,8 @@ import styled from '@emotion/styled';
 
 import { theme } from '@/utils/theme';
 
-export const NetworkItem = styled.div`
-  width: 250px;
+export const NetworkContainer = styled.button`
+  width: 100%;
   padding: ${theme.spacing.sm};
   display: flex;
   align-items: center;

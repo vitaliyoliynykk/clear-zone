@@ -1,20 +1,15 @@
-import { Spinner, VStack } from '@chakra-ui/react';
+import { Spinner } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
-import { JSX } from 'react/jsx-runtime';
-import {
-  MdSignalWifi1Bar,
-  MdSignalWifi2Bar,
-  MdSignalWifi4Bar,
-} from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 
+import NetworkItem from '@/shared/components/network-item/network-item-component';
 import {
   nextStep,
   selectConnectedDevice,
   selectNetwork,
 } from '@/store/slices/connect-module.slice';
 
-import { NetworkItem } from './styled-components';
+import { ModalStepBody } from '../styled-components';
 
 const networks: Record<string, string>[] = [
   { name: 'HomeNetwork_5G', signal: 'strong' },
@@ -58,42 +53,24 @@ const FindNetworkComponent: FC = () => {
 
   if (isLoading)
     return (
-      <VStack>
+      <ModalStepBody>
         <Spinner />
-      </VStack>
+      </ModalStepBody>
     );
 
-  const getNetworkIcon = (signal: string): JSX.Element => {
-    switch (signal) {
-      case 'strong':
-        return <MdSignalWifi4Bar />;
-
-      case 'medium':
-        return <MdSignalWifi2Bar />;
-
-      case 'low':
-        return <MdSignalWifi1Bar />;
-
-      default:
-        return <MdSignalWifi4Bar />;
-    }
-  };
-
   return (
-    <VStack>
+    <ModalStepBody>
       {networks.map((network, index) => (
         <NetworkItem
           key={index}
+          network={network}
           onClick={() => {
             dispatch(selectNetwork(network));
             dispatch(nextStep());
           }}
-        >
-          <p>{network.name}</p>
-          {getNetworkIcon(network.signal)}
-        </NetworkItem>
+        />
       ))}
-    </VStack>
+    </ModalStepBody>
   );
 };
 
