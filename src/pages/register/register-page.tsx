@@ -21,7 +21,7 @@ const RegisterPage: FC = () => {
   const navigate = useNavigate();
 
   const onSubmit = handleSubmit(({ email, password }) => {
-    dispatch(registerUser({ email, password }))
+    return dispatch(registerUser({ email, password }))
       .unwrap()
       .then(() => {
         toaster.create({

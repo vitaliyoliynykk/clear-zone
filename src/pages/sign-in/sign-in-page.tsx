@@ -36,7 +36,7 @@ const SignInPage: FC = () => {
   });
 
   const onSubmit = handleSubmit(({ email, password }) => {
-    dispatch(signIn({ email, password }))
+    return dispatch(signIn({ email, password }))
       .unwrap()
       .then(({ accessToken }) => {
         if (accessToken && setUser) {
