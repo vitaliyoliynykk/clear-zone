@@ -75,7 +75,7 @@ const Layout = () => {
 
         {!!user && (
           <HStack>
-            <div>{user.email}</div>
+            <div>{user.name ?? user.email}</div>
             <Menu.Root>
               <Menu.Trigger asChild>
                 <img

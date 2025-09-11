@@ -1,5 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { UpdateUserRequestModel } from '@/shared/models/requests/update-user-request-model';
 import { MessageResponseModel } from '@/shared/models/responses/error-response-model';
 import { SignInResponseModel } from '@/shared/models/responses/sign-in-response-model';
 import { UserResponseModel } from '@/shared/models/responses/user-response-model';
@@ -7,6 +8,7 @@ import { getUserRequest } from '@/shared/requests/auth/getUserRequest';
 import { logOutRequest } from '@/shared/requests/auth/logOutRequest';
 import { registerRequest } from '@/shared/requests/auth/registerRequest';
 import { signInRequest } from '@/shared/requests/auth/signInRequest';
+import { updateUserRequest } from '@/shared/requests/user/updateUser';
 
 import { RootState } from '../store';
 
@@ -21,7 +23,8 @@ const initialState: UserState = {
 };
 
 const selectUser = (state: RootState) => state.user.user;
-const selectUserLoadingStatus = (state: RootState) => state.user.status;
+const selectUserIsLoading = (state: RootState) =>
+  state.user.status === 'loading';
 
 export const signIn = createAsyncThunk<
   SignInResponseModel,
@@ -29,6 +32,10 @@ export const signIn = createAsyncThunk<
 >('user/signIn', ({ email, password }) => signInRequest(email, password));
 export const logOut = createAsyncThunk('user/logOut', () => logOutRequest());
 export const getUser = createAsyncThunk('user/get', () => getUserRequest());
+export const updateUser = createAsyncThunk<
+  UserResponseModel,
+  UpdateUserRequestModel
+>('user', (body) => updateUserRequest(body));
 export const registerUser = createAsyncThunk<
   MessageResponseModel,
   { email: string; password: string }
@@ -80,9 +87,24 @@ const userSlice = createSlice({
       .addCase(logOut.rejected, (state) => {
         state.status = 'error';
       });
+
+    builder
+      .addCase(updateUser.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        updateUser.fulfilled,
+        (state, action: PayloadAction<UserResponseModel>) => {
+          state.status = 'complete';
+          state.user = action.payload;
+        }
+      )
+      .addCase(updateUser.rejected, (state) => {
+        state.status = 'error';
+      });
   },
 });
 
 const userReducer = userSlice.reducer;
 
-export { selectUser, selectUserLoadingStatus, userReducer };
+export { selectUser, selectUserIsLoading, userReducer };

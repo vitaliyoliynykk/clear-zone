@@ -9,16 +9,38 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
-import { selectUser } from '@/store/slices/user-slice';
+import { selectUser, updateUser } from '@/store/slices/user-slice';
+import { useAppDispatch } from '@/store/store';
 import { theme } from '@/utils/theme';
 
 function SettingsPage() {
+  const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
 
   console.log(user);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { isSubmitting },
+  } = useForm<{
+    name?: string;
+  }>({
+    defaultValues: { name: '' },
+  });
+
+  const onSubmit = handleSubmit(({ name }) => {
+    return dispatch(updateUser({ name }))
+      .unwrap()
+      .then(() => {
+        reset();
+      });
+  });
 
   return (
     <Container style={{ height: '100%' }}>
@@ -54,10 +76,19 @@ function SettingsPage() {
             placeholder="Enter your username"
             size="lg"
             width="50%"
+            {...register('name')}
           />
         </Field.Root>
 
-        <Button type="submit" colorPalette={'teal'}>
+        <Button
+          type="submit"
+          colorPalette={'teal'}
+          loading={isSubmitting}
+          disabled={isSubmitting}
+          onClick={() => {
+            void onSubmit();
+          }}
+        >
           Update
         </Button>
       </VStack>
