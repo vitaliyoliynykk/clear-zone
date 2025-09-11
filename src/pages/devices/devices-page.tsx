@@ -2,8 +2,10 @@ import { Box, Container } from '@chakra-ui/react';
 import { FC } from 'react';
 import { IoAdd } from 'react-icons/io5';
 
+import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
+
 import { ConnectModuleDialog } from './connect-module-dialog/connect-module-dialog';
-import { DeviceContainer, PageHeading } from './styled-components';
+import { DeviceContainer } from './styled-components';
 
 const DevicesPage: FC = () => {
   return (

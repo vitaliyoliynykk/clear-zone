@@ -8,6 +8,8 @@ import { logOutRequest } from '@/shared/requests/auth/logOutRequest';
 import { registerRequest } from '@/shared/requests/auth/registerRequest';
 import { signInRequest } from '@/shared/requests/auth/signInRequest';
 
+import { RootState } from '../store';
+
 interface UserState {
   status: 'loading' | 'complete' | 'error' | 'empty';
   user: UserResponseModel | null;
@@ -17,6 +19,9 @@ const initialState: UserState = {
   status: 'empty',
   user: null,
 };
+
+const selectUser = (state: RootState) => state.user.user;
+const selectUserLoadingStatus = (state: RootState) => state.user.status;
 
 export const signIn = createAsyncThunk<
   SignInResponseModel,
@@ -80,4 +85,4 @@ const userSlice = createSlice({
 
 const userReducer = userSlice.reducer;
 
-export { userReducer };
+export { selectUser, selectUserLoadingStatus, userReducer };
