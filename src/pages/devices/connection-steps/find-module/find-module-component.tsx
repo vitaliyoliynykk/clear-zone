@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { toaster } from '@/components/ui/toaster';
 import { ModalStepBody } from '@/pages/devices/connection-steps/styled-components';
+import { CLEAR_ZONE_MODULE_SERVICE_ID } from '@/shared/constants/bt-services';
 import {
   connectDevice,
   disconnectDevice,
@@ -27,8 +28,7 @@ const FindModuleComponent: FC = () => {
       }
 
       const device = await navigator.bluetooth.requestDevice({
-        acceptAllDevices: true,
-        optionalServices: ['battery_service'],
+        filters: [{ services: [CLEAR_ZONE_MODULE_SERVICE_ID] }],
       });
 
       await device.gatt?.connect();
@@ -62,11 +62,22 @@ const FindModuleComponent: FC = () => {
 
   return (
     <ModalStepBody justifyContent="center">
-      <Button variant="subtle" size="lg" onClick={() => void connectToDevice()}>
+      <Button
+        variant="subtle"
+        size="lg"
+        width="100%"
+        onClick={() => void connectToDevice()}
+      >
         <PiBluetoothLight />
         Find a Module
       </Button>
-      <div style={{ padding: theme.spacing.sm }}>
+      <div
+        style={{
+          padding: theme.spacing.sm,
+          width: '100%',
+          backgroundColor: theme.colors.grayDark,
+        }}
+      >
         {displayConnectedDevice()}
       </div>
     </ModalStepBody>

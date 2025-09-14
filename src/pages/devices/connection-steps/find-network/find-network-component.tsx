@@ -1,75 +1,52 @@
-import { Spinner } from '@chakra-ui/react';
-import { FC, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { Button, Spinner } from '@chakra-ui/react';
+import { FC, useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
 import NetworkItem from '@/shared/components/network-item/network-item-component';
-import {
-  nextStep,
-  selectConnectedDevice,
-  selectNetwork,
-} from '@/store/slices/connect-module.slice';
+import { useGetWifiNetworks } from '@/shared/hooks/useGetWifiNetworks';
+import { nextStep, selectNetwork } from '@/store/slices/connect-module.slice';
 
 import { ModalStepBody } from '../styled-components';
 
-const networks: Record<string, string>[] = [
-  { name: 'HomeNetwork_5G', signal: 'strong' },
-  { name: 'Tenda 2.4G', signal: 'medium' },
-  { name: 'SomeNetwork', signal: 'low' },
-  { name: 'HomeNetwork_5G', signal: 'medium' },
-  { name: 'Tenda 2.4G', signal: 'medium' },
-  { name: 'SomeNetwork', signal: 'strong' },
-  { name: 'SomeNetwork', signal: 'low' },
-  { name: 'HomeNetwork_5G', signal: 'strong' },
-  { name: 'Tenda 2.4G', signal: 'medium' },
-  { name: 'SomeNetwork', signal: 'low' },
-  { name: 'HomeNetwork_5G', signal: 'medium' },
-  { name: 'Tenda 2.4G', signal: 'medium' },
-  { name: 'SomeNetwork', signal: 'strong' },
-  { name: 'SomeNetwork', signal: 'low' },
-];
-
-const getNetworks = async (): Promise<Record<string, string>[]> => {
-  return new Promise((res) =>
-    setTimeout(() => {
-      res(networks);
-    }, 1000)
-  );
-};
-
 const FindNetworkComponent: FC = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [networks, setNetworks] = useState<Record<string, string>[]>([]);
   const dispatch = useDispatch();
-  const connectedDevice = useSelector(selectConnectedDevice);
+
+  const { networks, isLoading, requestNetworks } = useGetWifiNetworks();
 
   useEffect(() => {
-    if (connectedDevice) {
-      void getNetworks().then((networks) => {
-        setNetworks(networks);
-        setIsLoading(false);
-      });
-    }
-  }, [connectedDevice]);
+    void requestNetworks();
+  }, [requestNetworks]);
 
   if (isLoading)
     return (
-      <ModalStepBody>
+      <ModalStepBody justifyContent="center" alignItems="center">
         <Spinner />
       </ModalStepBody>
     );
 
   return (
     <ModalStepBody>
-      {networks.map((network, index) => (
-        <NetworkItem
-          key={index}
-          network={network}
-          onClick={() => {
-            dispatch(selectNetwork(network));
-            dispatch(nextStep());
-          }}
-        />
-      ))}
+      <Button
+        onClick={() => {
+          void requestNetworks();
+        }}
+      >
+        Refresh
+      </Button>
+      {networks.length ? (
+        networks.map((network, index) => (
+          <NetworkItem
+            key={index}
+            network={network}
+            onClick={() => {
+              dispatch(selectNetwork(network));
+              dispatch(nextStep());
+            }}
+          />
+        ))
+      ) : (
+        <p>No networks found</p>
+      )}
     </ModalStepBody>
   );
 };

@@ -1,10 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { WifiNetworkModel } from '@/shared/models/bluetooth/bt-network-model';
 import { RootState } from '@/store/store';
 
 interface UserState {
   connectedDevice: BluetoothDevice | null;
-  selectedNetwork: Record<string, unknown> | null;
+  selectedNetwork: WifiNetworkModel | null;
   currentStep: number;
 }
 
@@ -27,7 +28,7 @@ const connectModuleSlice = createSlice({
     connectDevice: (state, action: PayloadAction<BluetoothDevice>) => {
       state.connectedDevice = action.payload;
     },
-    selectNetwork: (state, action: PayloadAction<Record<string, unknown>>) => {
+    selectNetwork: (state, action: PayloadAction<WifiNetworkModel>) => {
       state.selectedNetwork = action.payload;
     },
     nextStep: (state) => {

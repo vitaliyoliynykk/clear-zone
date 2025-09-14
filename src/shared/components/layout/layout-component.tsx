@@ -1,4 +1,4 @@
-import { HStack, Menu, Portal } from '@chakra-ui/react';
+import { HStack, Menu, Portal, Spinner } from '@chakra-ui/react';
 import { useEffect, useMemo } from 'react';
 import { Outlet } from 'react-router';
 
@@ -73,7 +73,7 @@ const Layout = () => {
 
         <HStack>{getNavigationMenu()}</HStack>
 
-        {!!user && (
+        {user ? (
           <HStack>
             <div>{user.name ?? user.email}</div>
             <Menu.Root>
@@ -100,6 +100,8 @@ const Layout = () => {
               </Portal>
             </Menu.Root>
           </HStack>
+        ) : (
+          <Spinner />
         )}
       </Navigation>
 

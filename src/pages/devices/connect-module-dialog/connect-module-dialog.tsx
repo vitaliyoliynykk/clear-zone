@@ -15,6 +15,7 @@ import FindNetworkComponent from '@/pages/devices/connection-steps/find-network/
 import {
   nextStep,
   resetConnectionState,
+  selectConnectedDevice,
   selectCurrentStep,
 } from '@/store/slices/connect-module.slice';
 
@@ -38,13 +39,25 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
 }) => {
   const dispatch = useDispatch();
   const currentStep = useSelector(selectCurrentStep);
+  const connectedDevice = useSelector(selectConnectedDevice);
+
+  const onDialogClose = () => {
+    if (connectedDevice) {
+      connectedDevice.gatt?.disconnect();
+      console.log('bt disconnected');
+    }
+
+    dispatch(resetConnectionState());
+  };
 
   return (
     <Dialog.Root
       placement="center"
       size="xl"
       unmountOnExit={true}
-      onExitComplete={() => dispatch(resetConnectionState())}
+      onExitComplete={() => {
+        onDialogClose();
+      }}
     >
       <Dialog.Trigger asChild>{children}</Dialog.Trigger>
 

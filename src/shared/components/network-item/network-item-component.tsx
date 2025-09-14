@@ -1,4 +1,6 @@
+import { HStack } from '@chakra-ui/react';
 import { FC, JSX } from 'react';
+import { GrSecure } from 'react-icons/gr';
 import {
   MdSignalWifi1Bar,
   MdSignalWifi2Bar,
@@ -6,12 +8,14 @@ import {
 } from 'react-icons/md';
 
 import { NetworkContainer } from '@/shared/components/network-item/styled-components';
+import { WifiNetworkModel } from '@/shared/models/bluetooth/bt-network-model';
+import { SignalStrengthModel } from '@/shared/models/bluetooth/signal-strength-model';
 
 const NetworkItem: FC<{
-  network: Record<string, string>;
+  network: WifiNetworkModel;
   onClick?: () => void;
 }> = ({ network, onClick }) => {
-  const getNetworkIcon = (signal: string): JSX.Element => {
+  const getNetworkIcon = (signal: SignalStrengthModel): JSX.Element => {
     switch (signal) {
       case 'strong':
         return <MdSignalWifi4Bar />;
@@ -21,9 +25,6 @@ const NetworkItem: FC<{
 
       case 'low':
         return <MdSignalWifi1Bar />;
-
-      default:
-        return <MdSignalWifi4Bar />;
     }
   };
 
@@ -37,7 +38,10 @@ const NetworkItem: FC<{
       }}
     >
       <p>{network.name}</p>
-      {getNetworkIcon(network.signal)}
+      <HStack>
+        {network.isSecure && <GrSecure />}
+        {getNetworkIcon(network.signal)}
+      </HStack>
     </NetworkContainer>
   );
 };
