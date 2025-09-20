@@ -4,13 +4,20 @@ import { useForm } from 'react-hook-form';
 import { PiShareNetwork } from 'react-icons/pi';
 import { useSelector } from 'react-redux';
 
+import { toaster } from '@/components/ui/toaster';
 import { ModalStepBody } from '@/pages/devices/connection-steps/styled-components';
 import NetworkItem from '@/shared/components/network-item/network-item-component';
-import { selectCurrentNetwork } from '@/store/slices/connect-module.slice';
+import { WIFI_CREDS_CHARACTERISTIC_ID } from '@/shared/constants/bt-characteristics';
+import { CLEAR_ZONE_MODULE_SERVICE_ID } from '@/shared/constants/bt-services';
+import {
+  selectConnectedDevice,
+  selectCurrentNetwork,
+} from '@/store/slices/connect-module.slice';
 
 /* eslint-disable */
 const ConnectNetworkComponent: FC = () => {
   const selectedNetwork = useSelector(selectCurrentNetwork);
+  const connectedDevice = useSelector(selectConnectedDevice);
 
   const {
     register,
@@ -31,14 +38,34 @@ const ConnectNetworkComponent: FC = () => {
     );
   }
 
-  const onSubmit = handleSubmit(({ password }) => {
-    console.log(password);
-    return new Promise((res) => {
-      setTimeout(() => {
-        res(password);
+  const onSubmit = handleSubmit(async ({ password }) => {
+    try {
+      if (connectedDevice) {
+        const server = await connectedDevice.gatt?.connect();
+        if (!server) return;
+
+        const service = await server.getPrimaryService(
+          CLEAR_ZONE_MODULE_SERVICE_ID
+        );
+        const characteristic = await service.getCharacteristic(
+          WIFI_CREDS_CHARACTERISTIC_ID
+        );
+
+        const encoder = new TextEncoder();
+        const data = encoder.encode(`${selectedNetwork.name}:${password}`);
+
+        await characteristic.writeValue(data);
+        toaster.create({
+          description: `Module connected to ${selectedNetwork.name} network`,
+          type: 'success',
+          duration: 3000,
+        });
+
         reset();
-      }, 300);
-    });
+
+        return;
+      }
+    } catch (error) {}
   });
 
   return (

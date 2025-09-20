@@ -57,7 +57,7 @@ const FindModuleComponent: FC = () => {
       return <>Connected: {connectedDevice.name}</>;
     }
 
-    return <>Find a device</>;
+    return <>No connected device</>;
   };
 
   return (
@@ -75,7 +75,10 @@ const FindModuleComponent: FC = () => {
         style={{
           padding: theme.spacing.sm,
           width: '100%',
-          backgroundColor: theme.colors.grayDark,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          fontSize: theme.fontSize.base,
         }}
       >
         {displayConnectedDevice()}

@@ -1,7 +1,7 @@
 import { useCallback, useState } from 'react';
 
 import { toaster } from '@/components/ui/toaster';
-import { WIFI_CHARACTERISTIC_ID } from '@/shared/constants/bt-characteristics';
+import { WIFI_NETWORKS_CHARACTERISTIC_ID } from '@/shared/constants/bt-characteristics';
 import { CLEAR_ZONE_MODULE_SERVICE_ID } from '@/shared/constants/bt-services';
 import { WifiNetworkModel } from '@/shared/models/bluetooth/bt-network-model';
 import { selectConnectedDevice } from '@/store/slices/connect-module.slice';
@@ -26,7 +26,7 @@ export const useGetWifiNetworks = () => {
           );
 
           const characteristic = await service.getCharacteristic(
-            WIFI_CHARACTERISTIC_ID
+            WIFI_NETWORKS_CHARACTERISTIC_ID
           );
 
           const rawValue = await characteristic.readValue();

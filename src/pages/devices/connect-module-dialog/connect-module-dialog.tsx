@@ -14,6 +14,7 @@ import FindModuleComponent from '@/pages/devices/connection-steps/find-module/fi
 import FindNetworkComponent from '@/pages/devices/connection-steps/find-network/find-network-component';
 import {
   nextStep,
+  prevStep,
   resetConnectionState,
   selectConnectedDevice,
   selectCurrentStep,
@@ -44,7 +45,6 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
   const onDialogClose = () => {
     if (connectedDevice) {
       connectedDevice.gatt?.disconnect();
-      console.log('bt disconnected');
     }
 
     dispatch(resetConnectionState());
@@ -98,9 +98,19 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
                 ))}
 
                 <ButtonGroup size="sm" variant="outline">
-                  <Button>Prev</Button>
+                  <Button
+                    onClick={() => dispatch(prevStep())}
+                    disabled={currentStep === 0}
+                  >
+                    Prev
+                  </Button>
 
-                  <Button onClick={() => dispatch(nextStep())}>Next</Button>
+                  <Button
+                    onClick={() => dispatch(nextStep())}
+                    disabled={!connectedDevice}
+                  >
+                    Next
+                  </Button>
                 </ButtonGroup>
               </Steps.Root>
             </Dialog.Body>
