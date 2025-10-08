@@ -55,17 +55,33 @@ const ConnectNetworkComponent: FC = () => {
         const data = encoder.encode(`${selectedNetwork.name}:${password}`);
 
         await characteristic.writeValue(data);
-        toaster.create({
-          description: `Module connected to ${selectedNetwork.name} network`,
-          type: 'success',
-          duration: 3000,
-        });
+
+        const result = await characteristic.readValue();
+
+        const decoder = new TextDecoder();
+        const response = decoder.decode(result);
+
+        if (+response !== 3) {
+          toaster.create({
+            description: `Error connecting to ${selectedNetwork.name} network`,
+            type: 'error',
+            duration: 3000,
+          });
+        } else {
+          toaster.create({
+            description: `Module connected to ${selectedNetwork.name} network`,
+            type: 'success',
+            duration: 3000,
+          });
+        }
 
         reset();
 
         return;
       }
-    } catch (error) {}
+    } catch (error) {
+      console.error('Error connecting to network:', error);
+    }
   });
 
   return (

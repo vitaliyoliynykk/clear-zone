@@ -6,7 +6,7 @@ import {
   Portal,
   Steps,
 } from '@chakra-ui/react';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import ConnectNetworkComponent from '@/pages/devices/connection-steps/connect-network/connect-network-component';
@@ -41,6 +41,7 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
   const dispatch = useDispatch();
   const currentStep = useSelector(selectCurrentStep);
   const connectedDevice = useSelector(selectConnectedDevice);
+  const [open, setOpen] = useState(false);
 
   const onDialogClose = () => {
     if (connectedDevice) {
@@ -55,6 +56,10 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
       placement="center"
       size="xl"
       unmountOnExit={true}
+      open={open}
+      onOpenChange={(e) => {
+        setOpen(e.open);
+      }}
       onExitComplete={() => {
         onDialogClose();
       }}
