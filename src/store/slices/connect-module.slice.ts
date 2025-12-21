@@ -27,9 +27,12 @@ const connectModuleSlice = createSlice({
   name: 'connect-module',
   initialState,
   reducers: {
-    connectDevice: (state, action: PayloadAction<{device: BluetoothDevice, deviceId: string}>) => {
+    connectDevice: (
+      state,
+      action: PayloadAction<{ device: BluetoothDevice; deviceId: string }>
+    ) => {
       state.connectedDevice = action.payload.device;
-      state.connectedDeviceId = action.payload.deviceId
+      state.connectedDeviceId = action.payload.deviceId;
     },
     selectNetwork: (state, action: PayloadAction<WifiNetworkModel>) => {
       state.selectedNetwork = action.payload;
