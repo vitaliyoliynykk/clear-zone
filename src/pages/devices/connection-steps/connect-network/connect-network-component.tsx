@@ -2,7 +2,7 @@ import { Alert, Button, Input } from '@chakra-ui/react';
 import { FC } from 'react';
 import { useForm } from 'react-hook-form';
 import { PiShareNetwork } from 'react-icons/pi';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { toaster } from '@/components/ui/toaster';
 import { ModalStepBody } from '@/pages/devices/connection-steps/styled-components';
@@ -10,6 +10,7 @@ import NetworkItem from '@/shared/components/network-item/network-item-component
 import { WIFI_CREDS_CHARACTERISTIC_ID } from '@/shared/constants/bt-characteristics';
 import { CLEAR_ZONE_MODULE_SERVICE_ID } from '@/shared/constants/bt-services';
 import {
+  nextStep,
   selectConnectedDevice,
   selectCurrentNetwork,
 } from '@/store/slices/connect-module.slice';
@@ -18,6 +19,7 @@ import {
 const ConnectNetworkComponent: FC = () => {
   const selectedNetwork = useSelector(selectCurrentNetwork);
   const connectedDevice = useSelector(selectConnectedDevice);
+  const dispatch = useDispatch();
 
   const {
     register,
@@ -68,6 +70,7 @@ const ConnectNetworkComponent: FC = () => {
             duration: 3000,
           });
         } else {
+          dispatch(nextStep());
           toaster.create({
             description: `Module connected to ${selectedNetwork.name} network`,
             type: 'success',

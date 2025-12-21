@@ -5,12 +5,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import { toaster } from '@/components/ui/toaster';
 import { ModalStepBody } from '@/pages/devices/connection-steps/styled-components';
+import { DEVICE_ID_CHARACTERISTIC_ID } from '@/shared/constants/bt-characteristics';
 import { CLEAR_ZONE_MODULE_SERVICE_ID } from '@/shared/constants/bt-services';
 import {
   connectDevice,
   disconnectDevice,
   selectConnectedDevice,
 } from '@/store/slices/connect-module.slice';
+import { decodeTextBTCharacteristic } from '@/utils/bluetooth/decode-characteristic';
 import { theme } from '@/utils/theme';
 
 const FindModuleComponent: FC = () => {
@@ -31,9 +33,23 @@ const FindModuleComponent: FC = () => {
         filters: [{ services: [CLEAR_ZONE_MODULE_SERVICE_ID] }],
       });
 
-      await device.gatt?.connect();
+      const server = await device.gatt?.connect();
 
-      dispatch(connectDevice(device));
+      if (server) {
+        const service = await server.getPrimaryService(
+          CLEAR_ZONE_MODULE_SERVICE_ID
+        );
+
+        const deviceIdCharateristic = await service.getCharacteristic(
+          DEVICE_ID_CHARACTERISTIC_ID
+        );
+
+        const deviceId = await decodeTextBTCharacteristic(
+          deviceIdCharateristic
+        );
+
+        dispatch(connectDevice({ device, deviceId }));
+      }
     } catch (error) {
       console.error('Bluetooth connection failed:', error);
       toaster.create({
