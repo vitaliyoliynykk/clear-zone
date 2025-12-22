@@ -7,7 +7,6 @@ import {
   Steps,
 } from '@chakra-ui/react';
 import { FC, ReactNode, useCallback, useEffect, useRef, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 import { toaster } from '@/components/ui/toaster';
 import ConnectNetworkComponent from '@/pages/devices/connection-steps/connect-network/connect-network-component';
@@ -17,12 +16,16 @@ import { STATUS_CHARACTERISTIC_ID } from '@/shared/constants/bt-characteristics'
 import { CLEAR_ZONE_MODULE_SERVICE_ID } from '@/shared/constants/bt-services';
 import { DeviceRegistrationResponseModel } from '@/shared/models/bluetooth/device-registration-response-model';
 import {
+  linkModule,
   nextStep,
   prevStep,
   resetConnectionState,
   selectConnectedDevice,
+  selectConnectedDeviceId,
   selectCurrentStep,
+  selectModuleLinkingStatus,
 } from '@/store/slices/connect-module.slice';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import ModuleRegistrationComponent from '../connection-steps/module-registration/module-registration';
 
@@ -48,9 +51,11 @@ const steps = [
 export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
   children,
 }) => {
-  const dispatch = useDispatch();
-  const currentStep = useSelector(selectCurrentStep);
-  const connectedDevice = useSelector(selectConnectedDevice);
+  const dispatch = useAppDispatch();
+  const currentStep = useAppSelector(selectCurrentStep);
+  const connectedDevice = useAppSelector(selectConnectedDevice);
+  const connectedDeviceId = useAppSelector(selectConnectedDeviceId);
+  const moduleLinkingStatus = useAppSelector(selectModuleLinkingStatus);
   const registrationStatusCharacteristic =
     useRef<BluetoothRemoteGATTCharacteristic | null>(null);
   const [open, setOpen] = useState(false);
@@ -63,12 +68,8 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
       value
     ) as DeviceRegistrationResponseModel;
 
-    if (registrationStatus === 'REGISTERED') {
-      toaster.create({
-        description: `Device successfully registered`,
-        type: 'success',
-        duration: 3000,
-      });
+    if (registrationStatus === 'REGISTERED' && connectedDeviceId) {
+      void dispatch(linkModule({ moduleId: connectedDeviceId }));
     } else {
       toaster.create({
         description: `Registration error. Please repeat the process`,
@@ -76,8 +77,6 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
         duration: 3000,
       });
     }
-
-    setOpen(false);
   };
 
   const subscribeRegistrationStatus = async (
@@ -115,7 +114,7 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
 
   const onRegistrationStatusNotifyCached = useCallback(
     onRegistrationStatusNotify,
-    []
+    [dispatch, connectedDeviceId]
   );
 
   const subscribeRegistrationStatusCached = useCallback(
@@ -145,6 +144,26 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
     subscribeRegistrationStatusCached,
     onRegistrationStatusNotifyCached,
   ]);
+
+  useEffect(() => {
+    if (moduleLinkingStatus === 'complete') {
+      toaster.create({
+        description: `Device successfully registered and linked to account`,
+        type: 'success',
+        duration: 4000,
+      });
+
+      setOpen(false);
+    } else if (moduleLinkingStatus === 'error') {
+      toaster.create({
+        description: `Registration error. Please repeat the process`,
+        type: 'error',
+        duration: 3000,
+      });
+
+      setOpen(false);
+    }
+  }, [moduleLinkingStatus]);
 
   const onDialogClose = () => {
     if (connectedDevice) {

@@ -1,4 +1,4 @@
-import { MessageResponseModel } from '@/shared/models/responses/error-response-model';
+import { MessageResponseModel } from '@/shared/models/responses/message-response-model';
 import api from '@/utils/api';
 
 export const registerRequest = async (

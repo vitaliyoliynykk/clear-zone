@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { LoadingStatus } from '@/shared/models/loading-status-model';
 import { UpdateUserRequestModel } from '@/shared/models/requests/update-user-request-model';
-import { MessageResponseModel } from '@/shared/models/responses/error-response-model';
+import { MessageResponseModel } from '@/shared/models/responses/message-response-model';
 import { SignInResponseModel } from '@/shared/models/responses/sign-in-response-model';
 import { UserResponseModel } from '@/shared/models/responses/user-response-model';
 import { getUserRequest } from '@/shared/requests/auth/getUserRequest';
@@ -13,7 +14,7 @@ import { updateUserRequest } from '@/shared/requests/user/updateUser';
 import { RootState } from '../store';
 
 interface UserState {
-  status: 'loading' | 'complete' | 'error' | 'empty';
+  status: LoadingStatus;
   user: UserResponseModel | null;
 }
 

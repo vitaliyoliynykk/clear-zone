@@ -2,7 +2,7 @@ import axios, { AxiosError } from 'axios';
 
 import { toaster } from '@/components/ui/toaster';
 import { ACCESS_TOKEN_KEY } from '@/shared/constants/tokens';
-import { MessageResponseModel } from '@/shared/models/responses/error-response-model';
+import { MessageResponseModel } from '@/shared/models/responses/message-response-model';
 
 const baseURL = import.meta.env.VITE_API_URL as string;
 
