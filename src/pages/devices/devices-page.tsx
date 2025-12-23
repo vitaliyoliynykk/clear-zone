@@ -11,6 +11,7 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import { ConnectModuleDialog } from './connect-module-dialog/connect-module-dialog';
+import ModuleDialog from './module-dialog/module-dialog';
 import { DeviceContainer } from './styled-components';
 
 const DevicesPage: FC = () => {
@@ -41,32 +42,28 @@ const DevicesPage: FC = () => {
   return (
     <Container style={{ height: '100%' }}>
       <PageHeading>My Devices</PageHeading>
-      <Box
-        display="flex"
-        style={{ gap: '12px', flexWrap: 'wrap' }}
-        onClick={() => {
-          console.log('clicked');
-        }}
-      >
+      <Box display="flex" style={{ gap: '12px', flexWrap: 'wrap' }}>
         {!!modules &&
           modules.map((module) => (
-            <DeviceContainer key={module.device_id}>
-              <Box display="flex" flexDirection="column" alignItems="center">
-                <div>{module.name}</div>
-                <div>
-                  Status:
-                  <span
-                    style={{
-                      width: 10,
-                      height: 10,
-                      backgroundColor: 'green',
-                      display: 'inline-block',
-                      borderRadius: '50%',
-                    }}
-                  ></span>
-                </div>
-              </Box>
-            </DeviceContainer>
+            <ModuleDialog key={module.device_id} module={module}>
+              <DeviceContainer>
+                <Box display="flex" flexDirection="column" alignItems="center">
+                  <div>{module.name}</div>
+                  <div>
+                    Status:
+                    <span
+                      style={{
+                        width: 10,
+                        height: 10,
+                        backgroundColor: 'green',
+                        display: 'inline-block',
+                        borderRadius: '50%',
+                      }}
+                    ></span>
+                  </div>
+                </Box>
+              </DeviceContainer>
+            </ModuleDialog>
           ))}
 
         <ConnectModuleDialog>
