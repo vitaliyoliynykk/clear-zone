@@ -1,8 +1,10 @@
 import { Box, Container, Spinner } from '@chakra-ui/react';
-import { FC, useEffect } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
+import { useWebSocket } from '@/shared/hooks/useWebSocket';
+import { WsDataModel } from '@/shared/models/ws-data-model';
 import {
   loadModulesList,
   selectModules,
@@ -18,10 +20,38 @@ const DevicesPage: FC = () => {
   const dispatch = useAppDispatch();
   const modules = useAppSelector(selectModules);
   const status = useAppSelector(selectModulesStatus);
+  const [modulesStatuses, setModulesStatuses] = useState<
+    Record<string, 'online' | 'offline'>
+  >({});
+
+  const onWsData = (wsData: WsDataModel<{ status: 'online' | 'offline' }>) => {
+    if (modules?.find((module) => module.device_id === wsData.deviceId)) {
+      setModulesStatuses((prev) => ({
+        ...prev,
+        [wsData.deviceId]: wsData.data.status,
+      }));
+    }
+  };
+
+  const onWsDataMemo = useCallback(onWsData, [modules]);
+
+  useWebSocket(onWsDataMemo);
 
   useEffect(() => {
     void dispatch(loadModulesList());
   }, [dispatch]);
+
+  const getStatusIcon = (status: 'online' | 'offline') => (
+    <span
+      style={{
+        width: 10,
+        height: 10,
+        backgroundColor: status === 'online' ? 'green' : 'red',
+        display: 'inline-block',
+        borderRadius: '50%',
+      }}
+    ></span>
+  );
 
   if (status === 'loading') {
     return (
@@ -51,15 +81,7 @@ const DevicesPage: FC = () => {
                   <div>{module.name}</div>
                   <div>
                     Status:
-                    <span
-                      style={{
-                        width: 10,
-                        height: 10,
-                        backgroundColor: 'green',
-                        display: 'inline-block',
-                        borderRadius: '50%',
-                      }}
-                    ></span>
+                    {getStatusIcon(modulesStatuses[module.device_id])}
                   </div>
                 </Box>
               </DeviceContainer>
