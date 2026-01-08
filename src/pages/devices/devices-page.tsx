@@ -1,4 +1,5 @@
 import { Box, Container, Spinner } from '@chakra-ui/react';
+import ReactECharts from 'echarts-for-react';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 
@@ -15,6 +16,56 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 import { ConnectModuleDialog } from './connect-module-dialog/connect-module-dialog';
 import ModuleDialog from './module-dialog/module-dialog';
 import { DeviceContainer } from './styled-components';
+
+const getGaugeOptions = (value: number) => ({
+  series: [
+    {
+      type: 'gauge',
+      min: 400,
+      max: 2000,
+      axisLine: {
+        lineStyle: {
+          width: 8,
+          color: [
+            [0.15, '#2b8e00ff'],
+            [0.23, '#dcd400ff'],
+            [0.42, '#d89f00ff'],
+            [1, '#d80e00ff'],
+          ],
+        },
+      },
+      pointer: {
+        itemStyle: {
+          color: 'auto',
+        },
+      },
+      axisTick: {
+        distance: 0,
+        length: 0,
+      },
+      splitLine: {
+        distance: 0,
+        length: 0,
+      },
+      axisLabel: {
+        color: 'black',
+        distance: -22,
+        fontSize: 10,
+      },
+      detail: {
+        valueAnimation: true,
+        formatter: '{value} ppm',
+        color: 'inherit',
+        fontSize: 14,
+      },
+      data: [
+        {
+          value: Math.floor(value),
+        },
+      ],
+    },
+  ],
+});
 
 const DevicesPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -116,7 +167,13 @@ const DevicesPage: FC = () => {
                   {module.name}
                 </div>
 
-                <div>CO2: {co2[module.device_id]} ppm</div>
+                <div>
+                  <ReactECharts
+                    option={getGaugeOptions(co2[module.device_id])}
+                    style={{ height: 170, width: 180 }}
+                  />
+                </div>
+
                 {
                   <div>
                     🌡️: {temp[module.device_id]?.temp ?? '--'} C, 💧:{' '}
