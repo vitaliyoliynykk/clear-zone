@@ -1,7 +1,17 @@
-export interface WsDataModel<T = never> {
-  type: 'status';
+export type WsDataModel = {
+  [K in keyof WsPayloads]: WsBase<K>;
+}[keyof WsPayloads];
+
+interface WsPayloads {
+  status: { status: 'online' | 'offline' };
+  co2: { co2: number };
+  temp: { temp: number; hum: number };
+}
+
+interface WsBase<K extends keyof WsPayloads> {
+  type: K;
   ts: number;
-  data: T;
+  data: WsPayloads[K];
   deviceId: string;
   retained: boolean;
 }

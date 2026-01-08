@@ -4,8 +4,8 @@ import styled from '@emotion/styled';
 import { theme } from '@/utils/theme';
 
 export const DeviceContainer = styled.div`
-  width: 200px;
-  height: 200px;
+  width: 250px;
+  height: 250px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -13,6 +13,7 @@ export const DeviceContainer = styled.div`
   border-radius: ${theme.radius.medium};
   cursor: pointer;
   transition: background-color 0.2s ease;
+  padding: 15px;
 
   :hover {
     background-color: ${theme.colors.lightBlue};

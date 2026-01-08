@@ -7,7 +7,7 @@ import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { WsDataModel } from '@/shared/models/ws-data-model';
 import {
   loadModulesList,
-  selectModules,
+  moduleSelectors,
   selectModulesStatus,
 } from '@/store/slices/devices';
 import { useAppDispatch, useAppSelector } from '@/store/store';
@@ -18,18 +18,40 @@ import { DeviceContainer } from './styled-components';
 
 const DevicesPage: FC = () => {
   const dispatch = useAppDispatch();
-  const modules = useAppSelector(selectModules);
+  const modules = useAppSelector(moduleSelectors.selectAll);
   const status = useAppSelector(selectModulesStatus);
   const [modulesStatuses, setModulesStatuses] = useState<
     Record<string, 'online' | 'offline'>
   >({});
+  const [co2, setModulesCo2] = useState<Record<string, number>>({});
+  const [temp, setModulesTemp] = useState<
+    Record<string, { temp: number; hum: number } | undefined>
+  >({});
 
-  const onWsData = (wsData: WsDataModel<{ status: 'online' | 'offline' }>) => {
-    if (modules?.find((module) => module.device_id === wsData.deviceId)) {
-      setModulesStatuses((prev) => ({
-        ...prev,
-        [wsData.deviceId]: wsData.data.status,
-      }));
+  const onWsData = (wsData: WsDataModel) => {
+    console.log('WS DATA', wsData);
+
+    if (wsData.type === 'status') {
+      if (modules.find((module) => module.device_id === wsData.deviceId)) {
+        setModulesStatuses((prev) => ({
+          ...prev,
+          [wsData.deviceId]: wsData.data.status,
+        }));
+      }
+    } else if (wsData.type === 'co2') {
+      if (modules.find((module) => module.device_id === wsData.deviceId)) {
+        setModulesCo2((prev) => ({
+          ...prev,
+          [wsData.deviceId]: wsData.data.co2,
+        }));
+      }
+    } else {
+      if (modules.find((module) => module.device_id === wsData.deviceId)) {
+        setModulesTemp((prev) => ({
+          ...prev,
+          [wsData.deviceId]: wsData.data,
+        }));
+      }
     }
   };
 
@@ -41,14 +63,20 @@ const DevicesPage: FC = () => {
     void dispatch(loadModulesList());
   }, [dispatch]);
 
+  useEffect(() => {
+    console.log(modulesStatuses);
+  }, [modulesStatuses]);
+
   const getStatusIcon = (status: 'online' | 'offline') => (
     <span
       style={{
-        width: 10,
-        height: 10,
+        width: 12,
+        height: 12,
         backgroundColor: status === 'online' ? 'green' : 'red',
         display: 'inline-block',
         borderRadius: '50%',
+        animation:
+          status === 'online' ? `pulse 2s ease-in-out infinite` : 'none',
       }}
     ></span>
   );
@@ -73,20 +101,32 @@ const DevicesPage: FC = () => {
     <Container style={{ height: '100%' }}>
       <PageHeading>My Devices</PageHeading>
       <Box display="flex" style={{ gap: '12px', flexWrap: 'wrap' }}>
-        {!!modules &&
-          modules.map((module) => (
-            <ModuleDialog key={module.device_id} module={module}>
-              <DeviceContainer>
-                <Box display="flex" flexDirection="column" alignItems="center">
-                  <div>{module.name}</div>
+        {modules.map((module) => (
+          <ModuleDialog key={module.device_id} module={module}>
+            <DeviceContainer>
+              <Box
+                display="flex"
+                flexDirection="column"
+                alignItems="center"
+                justifyContent="space-between"
+                height="100%"
+              >
+                <div>
+                  {getStatusIcon(modulesStatuses[module.device_id])}{' '}
+                  {module.name}
+                </div>
+
+                <div>CO2: {co2[module.device_id]} ppm</div>
+                {
                   <div>
-                    Status:
-                    {getStatusIcon(modulesStatuses[module.device_id])}
+                    🌡️: {temp[module.device_id]?.temp ?? '--'} C, 💧:{' '}
+                    {temp[module.device_id]?.hum ?? '--'} %
                   </div>
-                </Box>
-              </DeviceContainer>
-            </ModuleDialog>
-          ))}
+                }
+              </Box>
+            </DeviceContainer>
+          </ModuleDialog>
+        ))}
 
         <ConnectModuleDialog>
           <DeviceContainer>

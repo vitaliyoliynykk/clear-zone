@@ -30,7 +30,8 @@ export function useWebSocket(onMessage: (data: WsDataModel) => void) {
         onMessage(JSON.parse(e.data) as WsDataModel);
       };
 
-      ws.onclose = () => {
+      ws.onclose = (event) => {
+        console.log('ws closed', event.code);
         wsIsOpenRef.current = false;
       };
     }

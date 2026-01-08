@@ -1,32 +1,43 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createEntityAdapter,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 
 import { LoadingStatus } from '@/shared/models/loading-status-model';
 import { ModuleModel } from '@/shared/models/responses/module-model';
+import { deleteModuleRequest } from '@/shared/requests/modules/deleteModule';
 import { getAllModulesRequest } from '@/shared/requests/modules/getAllModules';
 
 import { RootState } from '../store';
 
-interface DevicesState {
-  status: LoadingStatus;
-  modules: ModuleModel[] | null;
-}
+const moduleAdapter = createEntityAdapter<ModuleModel>({
+  selectId: (u) => u.device_id,
+});
 
-export const loadModulesList = createAsyncThunk(
+const initialState2 = moduleAdapter.getInitialState<{ status: LoadingStatus }>({
+  status: 'empty',
+});
+
+export const loadModulesList = createAsyncThunk<ModuleModel[]>(
   'dashboard/loadModulesList',
   () => getAllModulesRequest()
 );
 
-const initialState: DevicesState = {
-  status: 'empty',
-  modules: null,
-};
+export const deleteModule = createAsyncThunk<ModuleModel, { moduleId: string }>(
+  'dashboard/deleteModule',
+  ({ moduleId }) => deleteModuleRequest(moduleId)
+);
 
-const selectModules = (state: RootState) => state.devices.modules;
+const moduleSelectors = moduleAdapter.getSelectors(
+  (state: RootState) => state.devices
+);
 const selectModulesStatus = (state: RootState) => state.devices.status;
 
 const devicesSlice = createSlice({
   name: 'dashboard',
-  initialState,
+  initialState: initialState2,
   reducers: {},
   extraReducers: (builder) => {
     builder
@@ -37,10 +48,25 @@ const devicesSlice = createSlice({
         loadModulesList.fulfilled,
         (state, action: PayloadAction<ModuleModel[]>) => {
           state.status = 'complete';
-          state.modules = action.payload;
+          moduleAdapter.setAll(state, action.payload);
         }
       )
       .addCase(loadModulesList.rejected, (state) => {
+        state.status = 'error';
+      });
+
+    builder
+      .addCase(deleteModule.pending, (state) => {
+        state.status = 'loading';
+      })
+      .addCase(
+        deleteModule.fulfilled,
+        (state, action: PayloadAction<ModuleModel>) => {
+          state.status = 'complete';
+          moduleAdapter.removeOne(state, action.payload.device_id);
+        }
+      )
+      .addCase(deleteModule.rejected, (state) => {
         state.status = 'error';
       });
   },
@@ -48,4 +74,4 @@ const devicesSlice = createSlice({
 
 const devicesReducer = devicesSlice.reducer;
 
-export { devicesReducer, selectModules, selectModulesStatus };
+export { devicesReducer, moduleSelectors, selectModulesStatus };
