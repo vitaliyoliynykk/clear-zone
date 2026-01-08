@@ -1,5 +1,4 @@
 import { Box, Container, Spinner } from '@chakra-ui/react';
-import ReactECharts from 'echarts-for-react';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 
@@ -14,58 +13,9 @@ import {
 import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import { ConnectModuleDialog } from './connect-module-dialog/connect-module-dialog';
+import DeviceTabComponent from './device-tab/device-tab-component';
 import ModuleDialog from './module-dialog/module-dialog';
 import { DeviceContainer } from './styled-components';
-
-const getGaugeOptions = (value: number) => ({
-  series: [
-    {
-      type: 'gauge',
-      min: 400,
-      max: 2000,
-      axisLine: {
-        lineStyle: {
-          width: 8,
-          color: [
-            [0.15, '#2b8e00ff'],
-            [0.23, '#dcd400ff'],
-            [0.42, '#d89f00ff'],
-            [1, '#d80e00ff'],
-          ],
-        },
-      },
-      pointer: {
-        itemStyle: {
-          color: 'auto',
-        },
-      },
-      axisTick: {
-        distance: 0,
-        length: 0,
-      },
-      splitLine: {
-        distance: 0,
-        length: 0,
-      },
-      axisLabel: {
-        color: 'black',
-        distance: -22,
-        fontSize: 10,
-      },
-      detail: {
-        valueAnimation: true,
-        formatter: '{value} ppm',
-        color: 'inherit',
-        fontSize: 14,
-      },
-      data: [
-        {
-          value: Math.floor(value),
-        },
-      ],
-    },
-  ],
-});
 
 const DevicesPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -114,24 +64,6 @@ const DevicesPage: FC = () => {
     void dispatch(loadModulesList());
   }, [dispatch]);
 
-  useEffect(() => {
-    console.log(modulesStatuses);
-  }, [modulesStatuses]);
-
-  const getStatusIcon = (status: 'online' | 'offline') => (
-    <span
-      style={{
-        width: 12,
-        height: 12,
-        backgroundColor: status === 'online' ? 'green' : 'red',
-        display: 'inline-block',
-        borderRadius: '50%',
-        animation:
-          status === 'online' ? `pulse 2s ease-in-out infinite` : 'none',
-      }}
-    ></span>
-  );
-
   if (status === 'loading') {
     return (
       <Container style={{ height: '100%' }}>
@@ -154,34 +86,13 @@ const DevicesPage: FC = () => {
       <Box display="flex" style={{ gap: '12px', flexWrap: 'wrap' }}>
         {modules.map((module) => (
           <ModuleDialog key={module.device_id} module={module}>
-            <DeviceContainer>
-              <Box
-                display="flex"
-                flexDirection="column"
-                alignItems="center"
-                justifyContent="space-between"
-                height="100%"
-              >
-                <div>
-                  {getStatusIcon(modulesStatuses[module.device_id])}{' '}
-                  {module.name}
-                </div>
-
-                <div>
-                  <ReactECharts
-                    option={getGaugeOptions(co2[module.device_id])}
-                    style={{ height: 170, width: 180 }}
-                  />
-                </div>
-
-                {
-                  <div>
-                    🌡️: {temp[module.device_id]?.temp ?? '--'} C, 💧:{' '}
-                    {temp[module.device_id]?.hum ?? '--'} %
-                  </div>
-                }
-              </Box>
-            </DeviceContainer>
+            <DeviceTabComponent
+              name={module.name}
+              status={modulesStatuses[module.device_id]}
+              co2={co2[module.device_id]}
+              temp={temp[module.device_id]?.temp}
+              hum={temp[module.device_id]?.hum}
+            />
           </ModuleDialog>
         ))}
 
