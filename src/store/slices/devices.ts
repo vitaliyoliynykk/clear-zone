@@ -12,7 +12,7 @@ import { getAllModulesRequest } from '@/shared/requests/modules/getAllModules';
 
 import { RootState } from '../store';
 
-const moduleAdapter = createEntityAdapter<ModuleModel>({
+const moduleAdapter = createEntityAdapter<ModuleModel, string>({
   selectId: (u) => u.device_id,
 });
 

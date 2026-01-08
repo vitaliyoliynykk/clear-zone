@@ -57,9 +57,14 @@ const DevicesPage: FC = () => {
     }
   };
 
-  const onWsDataMemo = useCallback(onWsData, [modules]);
+  const onWsClosed = () => {
+    setModulesStatuses(() => ({}));
+  };
 
-  useWebSocket(onWsDataMemo);
+  const onWsDataMemo = useCallback(onWsData, [modules]);
+  const onWsClosedMemo = useCallback(onWsClosed, []);
+
+  useWebSocket(onWsDataMemo, onWsClosedMemo);
 
   useEffect(() => {
     void dispatch(loadModulesList());

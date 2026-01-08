@@ -3,7 +3,10 @@ import { useEffect, useRef } from 'react';
 import { ACCESS_TOKEN_KEY } from '../constants/tokens';
 import { WsDataModel } from '../models/ws-data-model';
 
-export function useWebSocket(onMessage: (data: WsDataModel) => void) {
+export function useWebSocket(
+  onMessage: (data: WsDataModel) => void,
+  onClosed?: () => void
+) {
   const wsRef = useRef<WebSocket | null>(null);
   const wsIsOpenRef = useRef<boolean>(false);
   const queueRef = useRef<string[]>([]);
@@ -30,16 +33,18 @@ export function useWebSocket(onMessage: (data: WsDataModel) => void) {
         onMessage(JSON.parse(e.data) as WsDataModel);
       };
 
-      ws.onclose = (event) => {
-        console.log('ws closed', event.code);
+      ws.onclose = () => {
         wsIsOpenRef.current = false;
+        if (onClosed) {
+          onClosed();
+        }
       };
     }
 
     return () => {
       ws?.close();
     };
-  }, [onMessage]);
+  }, [onMessage, onClosed]);
 
   const send = (msg: unknown) => {
     const payload = JSON.stringify(msg);
