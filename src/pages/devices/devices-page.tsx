@@ -3,6 +3,7 @@ import { FC, useCallback, useEffect, useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
+import { useIsPWA } from '@/shared/hooks/useIsPWA';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { WsDataModel } from '@/shared/models/ws-data-model';
 import {
@@ -14,13 +15,13 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import { ConnectModuleDialog } from './connect-module-dialog/connect-module-dialog';
 import DeviceTabComponent from './device-tab/device-tab-component';
-import ModuleDialog from './module-dialog/module-dialog';
 import { DeviceContainer } from './styled-components';
 
 const DevicesPage: FC = () => {
   const dispatch = useAppDispatch();
   const modules = useAppSelector(moduleSelectors.selectAll);
   const status = useAppSelector(selectModulesStatus);
+  const isPWA = useIsPWA();
   const [modulesStatuses, setModulesStatuses] = useState<
     Record<string, 'online' | 'offline'>
   >({});
@@ -85,25 +86,25 @@ const DevicesPage: FC = () => {
       <PageHeading>My Devices</PageHeading>
       <Box display="flex" style={{ gap: '12px', flexWrap: 'wrap' }}>
         {modules.map((module) => (
-          <ModuleDialog key={module.device_id} module={module}>
-            <DeviceTabComponent
-              name={module.name}
-              status={modulesStatuses[module.device_id]}
-              co2={co2[module.device_id]}
-              temp={temp[module.device_id]?.temp}
-              hum={temp[module.device_id]?.hum}
-            />
-          </ModuleDialog>
+          <DeviceTabComponent
+            key={module.device_id}
+            name={module.name}
+            status={modulesStatuses[module.device_id]}
+            co2={co2[module.device_id]}
+            temp={temp[module.device_id]?.temp}
+            hum={temp[module.device_id]?.hum}
+          />
         ))}
-
-        <ConnectModuleDialog>
-          <DeviceContainer>
-            <Box display="flex" flexDirection="column" alignItems="center">
-              <IoAdd style={{ height: 50, width: 50, marginBottom: 4 }} />
-              <div>Connect Module</div>
-            </Box>
-          </DeviceContainer>
-        </ConnectModuleDialog>
+        {!isPWA && (
+          <ConnectModuleDialog>
+            <DeviceContainer>
+              <Box display="flex" flexDirection="column" alignItems="center">
+                <IoAdd style={{ height: 50, width: 50, marginBottom: 4 }} />
+                <div>Connect Module</div>
+              </Box>
+            </DeviceContainer>
+          </ConnectModuleDialog>
+        )}
       </Box>
     </Container>
   );

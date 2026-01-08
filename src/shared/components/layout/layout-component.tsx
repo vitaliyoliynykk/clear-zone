@@ -10,10 +10,12 @@ import { getUser, logOut } from '@/store/slices/user-slice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import {
+  AppTitle,
   Content,
   LayoutContainer,
   Navigation,
   StyledNavLink,
+  UserTitle,
 } from './styled-components';
 
 const _navigation = [
@@ -66,16 +68,14 @@ const Layout = () => {
       <Navigation>
         <HStack>
           <Logo />
-          <h1 style={{ color: 'black', fontWeight: 'bold', fontSize: 28 }}>
-            Clear Zone
-          </h1>
+          <AppTitle>Clear Zone</AppTitle>
         </HStack>
 
         <HStack>{getNavigationMenu()}</HStack>
 
         {user ? (
           <HStack>
-            <div>{user.name ?? user.email}</div>
+            <UserTitle>{user.name ?? user.email}</UserTitle>
             <Menu.Root>
               <Menu.Trigger asChild>
                 <img

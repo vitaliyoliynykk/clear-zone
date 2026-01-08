@@ -52,3 +52,19 @@ export const NavigationMenu = styled.ul`
     gap: ${({ theme }) => theme.spacing.md};
   }
 `;
+
+export const AppTitle = styled.h1`
+  color: black;
+  font-wight: bold;
+  font-size: 28;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+export const UserTitle = styled.div`
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;

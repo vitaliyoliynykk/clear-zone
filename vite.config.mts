@@ -10,20 +10,20 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Flow Track - productivity timer',
-        short_name: 'Flow Track',
-        description: 'Productivity timer',
+        name: 'Clear Zone - Home air quality app',
+        short_name: 'Clear Zone',
+        description: 'Air quality insights',
         theme_color: '#ffffff',
         background_color: '#ffffff',
         display: 'standalone',
         icons: [
           {
-            src: '/pomodoro.svg',
+            src: '/clear-zone.svg',
             sizes: '192x192',
             type: 'image/svg',
           },
           {
-            src: '/pomodoro.svg',
+            src: '/clear-zone.svg',
             sizes: '512x512',
             type: 'image/svg',
           },

@@ -15,6 +15,10 @@ export const DeviceContainer = styled.div`
   transition: background-color 0.2s ease;
   padding: 15px;
 
+  @media (max-width: 768px) {
+    width: 100%;
+  }
+
   :hover {
     background-color: ${theme.colors.lightBlue};
   }
