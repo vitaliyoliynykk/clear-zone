@@ -23,10 +23,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   async (error: AxiosError<MessageResponseModel>) => {
-    if (
-      error.response?.status === 401 &&
-      error.response.data.message === 'Not authorized'
-    ) {
+    if (error.response?.status === 403) {
       try {
         const refreshResponse = await api.post<{ accessToken: string }>(
           'auth/refresh'
