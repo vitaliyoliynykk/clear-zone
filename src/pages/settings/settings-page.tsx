@@ -92,6 +92,9 @@ function SettingsPage() {
           Update
         </Button>
       </VStack>
+      <p style={{ textAlign: 'right', marginTop: 12 }}>
+        Clear Zone v.{import.meta.env.VITE_APP_VERSION}
+      </p>
     </Container>
   );
 }
