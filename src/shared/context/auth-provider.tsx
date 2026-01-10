@@ -14,12 +14,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     if (token) {
       try {
         const decoded = jwtDecode<JwtUserModel>(token);
-        const now = Date.now() / 1000;
-        if (decoded.exp > now) {
-          _setUser(decoded);
-        } else {
-          localStorage.removeItem(ACCESS_TOKEN_KEY);
-        }
+        _setUser(decoded);
       } catch {
         localStorage.removeItem(ACCESS_TOKEN_KEY);
       }

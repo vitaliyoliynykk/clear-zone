@@ -3,6 +3,8 @@ import axios, { AxiosError } from 'axios';
 import { toaster } from '@/components/ui/toaster';
 import { ACCESS_TOKEN_KEY } from '@/shared/constants/tokens';
 import { MessageResponseModel } from '@/shared/models/responses/message-response-model';
+import { logOutRequest } from '@/shared/requests/auth/logOutRequest';
+import { refreshRequest } from '@/shared/requests/auth/refreshRequest';
 
 const baseURL = import.meta.env.VITE_API_URL as string;
 
@@ -25,9 +27,7 @@ api.interceptors.response.use(
   async (error: AxiosError<MessageResponseModel>) => {
     if (error.response?.status === 403) {
       try {
-        const refreshResponse = await api.post<{ accessToken: string }>(
-          'auth/refresh'
-        );
+        const refreshResponse = await refreshRequest();
 
         const newAccessToken = refreshResponse.data.accessToken;
         localStorage.setItem(ACCESS_TOKEN_KEY, newAccessToken);
@@ -48,7 +48,7 @@ api.interceptors.response.use(
         return;
       }
     } else if (error.response?.status === 401) {
-      await api.post('auth/logout');
+      await logOutRequest();
       localStorage.removeItem(ACCESS_TOKEN_KEY);
     }
 
