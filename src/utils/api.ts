@@ -47,6 +47,9 @@ api.interceptors.response.use(
 
         return;
       }
+    } else if (error.response?.status === 401) {
+      await api.post('auth/logout');
+      localStorage.removeItem(ACCESS_TOKEN_KEY);
     }
 
     toaster.create({
@@ -54,6 +57,7 @@ api.interceptors.response.use(
       type: 'error',
       duration: 3000,
     });
+
     return Promise.reject(error);
   }
 );
