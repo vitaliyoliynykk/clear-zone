@@ -26,14 +26,12 @@ const _navigation = [
 
 const Layout = () => {
   const dispatch = useAppDispatch();
-  const { user: authUser, setUser } = useAuth();
-  const { user, status } = useAppSelector(({ user }) => user);
+  const { setUser } = useAuth();
+  const { user } = useAppSelector(({ user }) => user);
 
   useEffect(() => {
-    if (authUser && !user && status !== 'loading') {
-      void dispatch(getUser());
-    }
-  }, [authUser, dispatch, user, status]);
+    void dispatch(getUser());
+  }, [dispatch]);
 
   const navigation = useMemo(() => {
     if (!user) {

@@ -6,6 +6,12 @@ import { MessageResponseModel } from '@/shared/models/responses/message-response
 import { logOutRequest } from '@/shared/requests/auth/logOutRequest';
 import { refreshRequest } from '@/shared/requests/auth/refreshRequest';
 
+declare module 'axios' {
+  export interface AxiosRequestConfig {
+    skipAuth?: boolean;
+  }
+}
+
 const baseURL = import.meta.env.VITE_API_URL as string;
 
 const api = axios.create({
@@ -13,6 +19,20 @@ const api = axios.create({
   timeout: 10000,
   withCredentials: true,
 });
+
+const logOutUser = async () => {
+  try {
+    await logOutRequest();
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+
+  localStorage.removeItem(ACCESS_TOKEN_KEY);
+
+  if (window.location.pathname !== '/sign-in') {
+    window.location.replace('/sign-in');
+  }
+};
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem(ACCESS_TOKEN_KEY);
@@ -25,6 +45,10 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (res) => res,
   async (error: AxiosError<MessageResponseModel>) => {
+    if (error.config?.skipAuth) {
+      return Promise.reject(error);
+    }
+
     if (error.response?.status === 403) {
       try {
         const refreshResponse = await refreshRequest();
@@ -45,11 +69,12 @@ api.interceptors.response.use(
           duration: 3000,
         });
 
+        await logOutUser();
+
         return;
       }
     } else if (error.response?.status === 401) {
-      await logOutRequest();
-      localStorage.removeItem(ACCESS_TOKEN_KEY);
+      await logOutUser();
     }
 
     toaster.create({

@@ -4,4 +4,7 @@ import api from '@/utils/api';
 
 export const refreshRequest = async (): Promise<
   AxiosResponse<{ accessToken: string }>
-> => api.post<{ accessToken: string }>('auth/refresh');
+> =>
+  api.post<{ accessToken: string }>('auth/refresh', undefined, {
+    skipAuth: true,
+  });
