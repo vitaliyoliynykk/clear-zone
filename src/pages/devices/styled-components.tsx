@@ -14,6 +14,7 @@ export const DeviceContainer = styled.div`
   cursor: pointer;
   transition: background-color 0.2s ease;
   padding: 15px;
+  border: 1px solid ${theme.colors.grayLight};
 
   @media (max-width: 768px) {
     width: 100%;

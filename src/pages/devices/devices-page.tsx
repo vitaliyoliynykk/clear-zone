@@ -1,6 +1,7 @@
 import { Box, Container, Spinner } from '@chakra-ui/react';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
+import { useNavigate } from 'react-router';
 
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
 import { useIsPWA } from '@/shared/hooks/useIsPWA';
@@ -22,6 +23,7 @@ const DevicesPage: FC = () => {
   const modules = useAppSelector(moduleSelectors.selectAll);
   const status = useAppSelector(selectModulesStatus);
   const isPWA = useIsPWA();
+  const navigate = useNavigate();
   const [modulesStatuses, setModulesStatuses] = useState<
     Record<string, 'online' | 'offline'>
   >({});
@@ -91,14 +93,21 @@ const DevicesPage: FC = () => {
       <PageHeading>My Devices</PageHeading>
       <Box display="flex" style={{ gap: '12px', flexWrap: 'wrap' }}>
         {modules.map((module) => (
-          <DeviceTabComponent
+          <button
+            type="button"
             key={module.device_id}
-            name={module.name}
-            status={modulesStatuses[module.device_id]}
-            co2={co2[module.device_id]}
-            temp={temp[module.device_id]?.temp}
-            hum={temp[module.device_id]?.hum}
-          />
+            onClick={() => {
+              void navigate(`dashboard/${module.device_id}`);
+            }}
+          >
+            <DeviceTabComponent
+              name={module.name}
+              status={modulesStatuses[module.device_id]}
+              co2={co2[module.device_id]}
+              temp={temp[module.device_id]?.temp}
+              hum={temp[module.device_id]?.hum}
+            />
+          </button>
         ))}
         {!isPWA && (
           <ConnectModuleDialog>

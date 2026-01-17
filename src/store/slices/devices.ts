@@ -16,7 +16,7 @@ const moduleAdapter = createEntityAdapter<ModuleModel, string>({
   selectId: (u) => u.device_id,
 });
 
-const initialState2 = moduleAdapter.getInitialState<{ status: LoadingStatus }>({
+const initialState = moduleAdapter.getInitialState<{ status: LoadingStatus }>({
   status: 'empty',
 });
 
@@ -37,7 +37,7 @@ const selectModulesStatus = (state: RootState) => state.devices.status;
 
 const devicesSlice = createSlice({
   name: 'dashboard',
-  initialState: initialState2,
+  initialState: initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
