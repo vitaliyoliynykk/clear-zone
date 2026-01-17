@@ -1,10 +1,10 @@
-import { Container, Flex, Heading } from '@chakra-ui/react';
+import { Box, Container, Flex, Heading, Spinner } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
 import { FC } from 'react';
 import { useParams } from 'react-router';
 
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
-import { moduleSelectors } from '@/store/slices/devices';
+import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
 import { useAppSelector } from '@/store/store';
 
 import { DashboardCard } from './styled-component';
@@ -88,6 +88,7 @@ const getGaugeOptions = (value: number) => ({
 // };
 
 const DeviceDashboardPage: FC = () => {
+  const modulesStatus = useAppSelector(selectModulesStatus);
   const { deviceId } = useParams<{ deviceId: string }>();
   const module = useAppSelector((state) =>
     deviceId ? moduleSelectors.selectById(state, deviceId) : null
@@ -103,6 +104,21 @@ const DeviceDashboardPage: FC = () => {
   //     );
   //   }
   // }, []);
+
+  if (modulesStatus === 'loading') {
+    return (
+      <Container style={{ height: '100%' }}>
+        <Box
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+          style={{ height: '100%' }}
+        >
+          <Spinner />
+        </Box>
+      </Container>
+    );
+  }
 
   if (!module) {
     return (

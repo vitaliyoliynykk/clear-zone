@@ -1,5 +1,5 @@
 import { Box, Container, Spinner } from '@chakra-ui/react';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 
@@ -7,19 +7,14 @@ import { PageHeading } from '@/shared/components/page-heading/page-heading-compo
 import { useIsPWA } from '@/shared/hooks/useIsPWA';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { WsDataModel } from '@/shared/models/ws-data-model';
-import {
-  loadModulesList,
-  moduleSelectors,
-  selectModulesStatus,
-} from '@/store/slices/devices';
-import { useAppDispatch, useAppSelector } from '@/store/store';
+import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
+import { useAppSelector } from '@/store/store';
 
 import { ConnectModuleDialog } from './connect-module-dialog/connect-module-dialog';
 import DeviceTabComponent from './device-tab/device-tab-component';
 import { DeviceContainer } from './styled-components';
 
 const DevicesPage: FC = () => {
-  const dispatch = useAppDispatch();
   const modules = useAppSelector(moduleSelectors.selectAll);
   const status = useAppSelector(selectModulesStatus);
   const isPWA = useIsPWA();
@@ -67,10 +62,6 @@ const DevicesPage: FC = () => {
   const onWsClosedMemo = useCallback(onWsClosed, []);
 
   useWebSocket(onWsDataMemo, onWsClosedMemo);
-
-  useEffect(() => {
-    void dispatch(loadModulesList());
-  }, [dispatch]);
 
   if (status === 'loading') {
     return (

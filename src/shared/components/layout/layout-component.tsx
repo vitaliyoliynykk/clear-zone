@@ -6,6 +6,7 @@ import userLogo from '@/assets/images/user.svg';
 import { Logo } from '@/shared/components/logo/Logo';
 import { ACCESS_TOKEN_KEY } from '@/shared/constants/tokens';
 import { useAuth } from '@/shared/context/auth-context';
+import { loadModulesList } from '@/store/slices/devices';
 import { getUser, logOut } from '@/store/slices/user-slice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 
@@ -31,6 +32,7 @@ const Layout = () => {
 
   useEffect(() => {
     void dispatch(getUser());
+    void dispatch(loadModulesList());
   }, [dispatch]);
 
   const navigation = useMemo(() => {
