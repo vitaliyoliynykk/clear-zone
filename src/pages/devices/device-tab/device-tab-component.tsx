@@ -12,7 +12,8 @@ const DeviceTabComponent: FC<{
   co2?: number;
   temp?: number;
   hum?: number;
-}> = ({ name, status, co2 = 0, temp = '--', hum = '--' }) => {
+  onClick?: () => void;
+}> = ({ name, status, co2 = 0, temp = '--', hum = '--', onClick }) => {
   const getGaugeOptions = (value: number) => ({
     series: [
       {
@@ -64,7 +65,13 @@ const DeviceTabComponent: FC<{
   });
 
   return (
-    <DeviceContainer>
+    <DeviceContainer
+      onClick={() => {
+        if (onClick) {
+          onClick();
+        }
+      }}
+    >
       <Box
         display="flex"
         flexDirection="column"

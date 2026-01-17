@@ -84,22 +84,17 @@ const DevicesPage: FC = () => {
       <PageHeading>My Devices</PageHeading>
       <Box display="flex" style={{ gap: '12px', flexWrap: 'wrap' }}>
         {modules.map((module) => (
-          <button
-            type="button"
-            style={{ width: '100%' }}
+          <DeviceTabComponent
             key={module.device_id}
+            name={module.name}
+            status={modulesStatuses[module.device_id]}
+            co2={co2[module.device_id]}
+            temp={temp[module.device_id]?.temp}
+            hum={temp[module.device_id]?.hum}
             onClick={() => {
               void navigate(`dashboard/${module.device_id}`);
             }}
-          >
-            <DeviceTabComponent
-              name={module.name}
-              status={modulesStatuses[module.device_id]}
-              co2={co2[module.device_id]}
-              temp={temp[module.device_id]?.temp}
-              hum={temp[module.device_id]?.hum}
-            />
-          </button>
+          />
         ))}
         {!isPWA && (
           <ConnectModuleDialog>

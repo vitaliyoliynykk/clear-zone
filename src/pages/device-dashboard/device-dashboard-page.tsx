@@ -20,6 +20,7 @@ import { useAppSelector } from '@/store/store';
 import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
 
+import MetricTabComponent from './metric-tab/metric-tab-component';
 import { DashboardCard } from './styled-component';
 
 const getGaugeOptions = (value: number) => ({
@@ -108,16 +109,33 @@ const DeviceDashboardPage: FC = () => {
   );
   const [moduleNetworkStatus, setModuleNetworkStatus] =
     useState<ModuleNetworkStatus>('offline');
-  const [wsLastUpdated, setWsLastUpdated] = useState<number | null>(null);
+  const [wsStatusLastUpdated, setWsStatusLastUpdated] = useState<number | null>(
+    null
+  );
+  const [wsMetricsLastUpdated, setWsMetricsLastUpdated] = useState<
+    number | null
+  >(null);
+  const [co2, setCo2] = useState<number | null>(null);
+  const [temperature, setTemperature] = useState<number | null>(null);
+  const [humidity, setHumidity] = useState<number | null>(null);
 
   const onWsData = (wsData: WsDataModel) => {
     console.log('WS DATA', wsData);
 
     if (wsData.deviceId === module?.device_id) {
-      setWsLastUpdated(wsData.ts);
-
       if (wsData.type === 'status') {
+        setWsStatusLastUpdated(new Date().getTime());
         setModuleNetworkStatus(wsData.data.status);
+      } else {
+        setWsMetricsLastUpdated(wsData.ts);
+      }
+
+      if (wsData.type === 'co2') {
+        setCo2(wsData.data.co2);
+      }
+      if (wsData.type === 'temp') {
+        setTemperature(wsData.data.temp);
+        setHumidity(wsData.data.hum);
       }
     }
   };
@@ -136,6 +154,55 @@ const DeviceDashboardPage: FC = () => {
   //     );
   //   }
   // }, []);
+
+  const getIAQComponents = () => {
+    if (moduleNetworkStatus === 'offline') {
+      return (
+        <Flex justify="center" align="center" flex={1}>
+          Module is offline. No current data
+        </Flex>
+      );
+    } else {
+      if (wsMetricsLastUpdated === null) {
+        return (
+          <Flex justify="center" align="center" direction="column" flex={1}>
+            <p>Current metrics are loading.</p>
+            <p>It can take up to a minute</p>
+            <Spinner style={{ marginTop: theme.spacing.sm }} />
+          </Flex>
+        );
+      }
+
+      return (
+        <>
+          {co2 !== null && (
+            <MetricTabComponent
+              status="Good"
+              metric="CO2"
+              value={`${co2.toString()} ppm`}
+              badgeColor="green"
+            />
+          )}
+          {temperature !== null && (
+            <MetricTabComponent
+              status="Good"
+              metric="Temperature"
+              value={`${temperature.toString()} °C`}
+              badgeColor="green"
+            />
+          )}
+          {humidity !== null && (
+            <MetricTabComponent
+              status="Good"
+              metric="Humidity"
+              value={`${humidity.toString()} %`}
+              badgeColor="green"
+            />
+          )}
+        </>
+      );
+    }
+  };
 
   if (modulesStatus === 'loading') {
     return (
@@ -162,7 +229,7 @@ const DeviceDashboardPage: FC = () => {
 
   return (
     <Container style={{ height: '100%', overflow: 'auto' }}>
-      <PageHeading>Dashboard - {module.name}</PageHeading>
+      <PageHeading>Air Quality Overview - {module.name}</PageHeading>
       <Flex style={{ marginBottom: theme.spacing.sm }}>
         <Badge
           style={{ marginRight: theme.spacing.xs }}
@@ -175,8 +242,8 @@ const DeviceDashboardPage: FC = () => {
           Last Updated:
           <span>
             {' '}
-            {wsLastUpdated !== null
-              ? formatDate(new Date(wsLastUpdated).toISOString())
+            {wsStatusLastUpdated !== null
+              ? formatDate(new Date(wsStatusLastUpdated).toISOString())
               : 'pending...'}
           </span>
         </p>
@@ -190,42 +257,10 @@ const DeviceDashboardPage: FC = () => {
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Components</Heading>
           <p style={{ marginBottom: theme.spacing.sm }}>
-            Metrics contributing to the overall IAQ score
+            Metrics contributing to the overall IAQ score{' '}
           </p>
-          <div
-            style={{
-              padding: 8,
-              borderRadius: theme.radius.medium,
-              borderColor: theme.colors.grayDark,
-              backgroundColor: theme.colors.white,
-              borderWidth: 1,
-              marginBottom: theme.spacing.sm,
-            }}
-          >
-            <p style={{ fontWeight: 'bold' }}>CO2</p>
-            <p>
-              900 ppm <Badge colorPalette="green">Good</Badge>
-            </p>
-          </div>
-          <div
-            style={{
-              padding: 8,
-              borderRadius: theme.radius.medium,
-              borderColor: theme.colors.grayDark,
-              backgroundColor: theme.colors.white,
-              borderWidth: 1,
-              marginBottom: theme.spacing.sm,
-            }}
-          >
-            <p style={{ fontWeight: 'bold' }}>PM2 Index</p>
-            <p>
-              18 µg/m³ <Badge colorPalette="yellow">Moderate</Badge>
-            </p>
-          </div>
-          {/* <div>PM2.5</div>
-          <div>VOC Index</div>
-          <div>Humidity</div>
-          <div>Temperature</div> */}
+
+          {getIAQComponents()}
         </DashboardCard>
       </Flex>
       <Flex direction="column">
