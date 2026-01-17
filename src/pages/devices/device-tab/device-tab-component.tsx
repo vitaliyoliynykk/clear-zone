@@ -2,6 +2,8 @@ import { Box } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
 import { FC } from 'react';
 
+import NetworkStatusDot from '@/shared/components/network-status-dot/network-status-dot';
+
 import { DeviceContainer } from '../styled-components';
 
 const DeviceTabComponent: FC<{
@@ -11,20 +13,6 @@ const DeviceTabComponent: FC<{
   temp?: number;
   hum?: number;
 }> = ({ name, status, co2 = 0, temp = '--', hum = '--' }) => {
-  const getStatusIcon = (status: 'online' | 'offline') => (
-    <span
-      style={{
-        width: 12,
-        height: 12,
-        backgroundColor: status === 'online' ? 'green' : 'red',
-        display: 'inline-block',
-        borderRadius: '50%',
-        animation:
-          status === 'online' ? `pulse 2s ease-in-out infinite` : 'none',
-      }}
-    ></span>
-  );
-
   const getGaugeOptions = (value: number) => ({
     series: [
       {
@@ -85,7 +73,7 @@ const DeviceTabComponent: FC<{
         height="100%"
       >
         <div>
-          {getStatusIcon(status)} {name}
+          <NetworkStatusDot status={status} /> {name}
         </div>
 
         <div>

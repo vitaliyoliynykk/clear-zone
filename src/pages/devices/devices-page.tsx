@@ -86,6 +86,7 @@ const DevicesPage: FC = () => {
         {modules.map((module) => (
           <button
             type="button"
+            style={{ width: '100%' }}
             key={module.device_id}
             onClick={() => {
               void navigate(`dashboard/${module.device_id}`);

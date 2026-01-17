@@ -1,11 +1,24 @@
-import { Box, Container, Flex, Heading, Spinner } from '@chakra-ui/react';
+import {
+  Badge,
+  Box,
+  Container,
+  Flex,
+  Heading,
+  Spinner,
+} from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
-import { FC } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { useParams } from 'react-router';
 
+import NetworkStatusDot from '@/shared/components/network-status-dot/network-status-dot';
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
+import { useWebSocket } from '@/shared/hooks/useWebSocket';
+import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model';
+import { WsDataModel } from '@/shared/models/ws-data-model';
 import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
 import { useAppSelector } from '@/store/store';
+import { theme } from '@/utils/theme';
+import { formatDate } from '@/utils/time';
 
 import { DashboardCard } from './styled-component';
 
@@ -93,6 +106,25 @@ const DeviceDashboardPage: FC = () => {
   const module = useAppSelector((state) =>
     deviceId ? moduleSelectors.selectById(state, deviceId) : null
   );
+  const [moduleNetworkStatus, setModuleNetworkStatus] =
+    useState<ModuleNetworkStatus>('offline');
+  const [wsLastUpdated, setWsLastUpdated] = useState<number | null>(null);
+
+  const onWsData = (wsData: WsDataModel) => {
+    console.log('WS DATA', wsData);
+
+    if (wsData.deviceId === module?.device_id) {
+      setWsLastUpdated(wsData.ts);
+
+      if (wsData.type === 'status') {
+        setModuleNetworkStatus(wsData.data.status);
+      }
+    }
+  };
+
+  const onWsDataMemo = useCallback(onWsData, [module]);
+
+  useWebSocket(onWsDataMemo);
   // const [data, setData] = useState([]);
 
   // useEffect(() => {
@@ -129,8 +161,26 @@ const DeviceDashboardPage: FC = () => {
   }
 
   return (
-    <Container style={{ height: '100%' }}>
+    <Container style={{ height: '100%', overflow: 'auto' }}>
       <PageHeading>Dashboard - {module.name}</PageHeading>
+      <Flex style={{ marginBottom: theme.spacing.sm }}>
+        <Badge
+          style={{ marginRight: theme.spacing.xs }}
+          colorPalette={moduleNetworkStatus === 'online' ? 'green' : 'red'}
+        >
+          <NetworkStatusDot status={moduleNetworkStatus} />
+          {moduleNetworkStatus}
+        </Badge>
+        <p>
+          Last Updated:
+          <span>
+            {' '}
+            {wsLastUpdated !== null
+              ? formatDate(new Date(wsLastUpdated).toISOString())
+              : 'pending...'}
+          </span>
+        </p>
+      </Flex>
       <Flex wrap="wrap" gap={4}>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Score</Heading>
@@ -139,12 +189,43 @@ const DeviceDashboardPage: FC = () => {
         </DashboardCard>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Components</Heading>
-          <p>Metrics contributing to the overall IAQ score</p>
-          <div>CO2</div>
-          <div>PM2.5</div>
+          <p style={{ marginBottom: theme.spacing.sm }}>
+            Metrics contributing to the overall IAQ score
+          </p>
+          <div
+            style={{
+              padding: 8,
+              borderRadius: theme.radius.medium,
+              borderColor: theme.colors.grayDark,
+              backgroundColor: theme.colors.white,
+              borderWidth: 1,
+              marginBottom: theme.spacing.sm,
+            }}
+          >
+            <p style={{ fontWeight: 'bold' }}>CO2</p>
+            <p>
+              900 ppm <Badge colorPalette="green">Good</Badge>
+            </p>
+          </div>
+          <div
+            style={{
+              padding: 8,
+              borderRadius: theme.radius.medium,
+              borderColor: theme.colors.grayDark,
+              backgroundColor: theme.colors.white,
+              borderWidth: 1,
+              marginBottom: theme.spacing.sm,
+            }}
+          >
+            <p style={{ fontWeight: 'bold' }}>PM2 Index</p>
+            <p>
+              18 µg/m³ <Badge colorPalette="yellow">Moderate</Badge>
+            </p>
+          </div>
+          {/* <div>PM2.5</div>
           <div>VOC Index</div>
           <div>Humidity</div>
-          <div>Temperature</div>
+          <div>Temperature</div> */}
         </DashboardCard>
       </Flex>
       <Flex direction="column">
