@@ -8,7 +8,8 @@ const MetricTabComponent: FC<{
   value: string;
   badgeColor: string;
   status: string;
-}> = ({ metric, value, badgeColor = 'green', status }) => {
+  onClick?: () => void;
+}> = ({ metric, value, badgeColor = 'green', status, onClick }) => {
   return (
     <div
       style={{
@@ -18,7 +19,9 @@ const MetricTabComponent: FC<{
         backgroundColor: theme.colors.white,
         borderWidth: 1,
         marginBottom: theme.spacing.sm,
+        cursor: 'pointer',
       }}
+      onClick={onClick}
     >
       <p style={{ fontWeight: 'bold' }}>{metric}</p>
       <p>

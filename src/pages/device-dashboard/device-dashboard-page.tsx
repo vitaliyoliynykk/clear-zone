@@ -7,102 +7,39 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { useParams } from 'react-router';
 
 import NetworkStatusDot from '@/shared/components/network-status-dot/network-status-dot';
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
+import { getIAQGaugeOptions } from '@/shared/e-charts/iaq-gauge-options';
+import { getIAQTimeseriosOptions } from '@/shared/e-charts/iaq-timeseries-chart-options';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model';
+import { ModuleModel } from '@/shared/models/responses/module-model';
 import { WsDataModel } from '@/shared/models/ws-data-model';
+import {
+  loadChart,
+  selectChartData,
+  selectChartLoadingStatus,
+  selectChartType,
+} from '@/store/slices/device-dashboard.slice';
 import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
-import { useAppSelector } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { IAQComponentsConfig } from '@/utils/iaq-components-config';
 import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
 
 import MetricTabComponent from './metric-tab/metric-tab-component';
 import { DashboardCard } from './styled-component';
 
-const getGaugeOptions = (value: number) => ({
-  series: [
-    {
-      type: 'gauge',
-      min: 0,
-      max: 100,
-      axisLine: {
-        lineStyle: {
-          width: 18,
-          color: [
-            [0.33, '#d80e00ff'],
-            [0.66, '#8da300ff'],
-            [1, '#2b8e00ff'],
-          ],
-        },
-      },
-      pointer: {
-        itemStyle: {
-          color: 'black',
-        },
-      },
-      axisTick: {
-        distance: 0,
-        length: 0,
-      },
-      splitLine: {
-        distance: 0,
-        length: 0,
-      },
-      axisLabel: {
-        color: 'black',
-        distance: -22,
-        fontSize: 14,
-      },
-      detail: {
-        valueAnimation: true,
-        formatter: '{value}',
-        color: 'black',
-        fontSize: 24,
-      },
-      data: [
-        {
-          value: Math.floor(value),
-        },
-      ],
-    },
-  ],
-});
-
-// const getChartOption = (data) => {
-//   const values = data.map((v) => v.value);
-//   console.log(values);
-//   const minValue = Math.min(...values);
-
-//   console.log(minValue);
-
-//   return {
-//     title: {
-//       text: 'CO2 (PPM)',
-//     },
-//     xAxis: {
-//       type: 'category',
-//       data: data.map((v) => formatDate(v.date)),
-//     },
-//     yAxis: {
-//       type: 'value',
-//       min: Math.floor(minValue - 100),
-//     },
-//     series: [
-//       {
-//         data: values,
-//         type: 'line',
-//         smooth: true,
-//       },
-//     ],
-//   };
-// };
-
 const DeviceDashboardPage: FC = () => {
+  const dispatch = useAppDispatch();
   const modulesStatus = useAppSelector(selectModulesStatus);
+  const chartType = useAppSelector(selectChartType);
+  const chartData = useAppSelector(selectChartData);
+  const chartLoadingStatus = useAppSelector(selectChartLoadingStatus);
+
   const { deviceId } = useParams<{ deviceId: string }>();
   const module = useAppSelector((state) =>
     deviceId ? moduleSelectors.selectById(state, deviceId) : null
@@ -143,19 +80,16 @@ const DeviceDashboardPage: FC = () => {
   const onWsDataMemo = useCallback(onWsData, [module]);
 
   useWebSocket(onWsDataMemo);
-  // const [data, setData] = useState([]);
 
-  // useEffect(() => {
-  //   if (module) {
-  //     void getSensorAgrregatedTimeseriesRequest(module.device_id, 'co2').then(
-  //       (res) => {
-  //         setData(res);
-  //       }
-  //     );
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (module) {
+      void dispatch(
+        loadChart({ chartType: 'co2', deviceId: module.device_id })
+      );
+    }
+  }, [module, dispatch]);
 
-  const getIAQComponents = () => {
+  const getIAQComponents = (module: ModuleModel) => {
     if (moduleNetworkStatus === 'offline') {
       return (
         <Flex justify="center" align="center" flex={1}>
@@ -181,6 +115,11 @@ const DeviceDashboardPage: FC = () => {
               metric="CO2"
               value={`${co2.toString()} ppm`}
               badgeColor="green"
+              onClick={() =>
+                void dispatch(
+                  loadChart({ chartType: 'co2', deviceId: module.device_id })
+                )
+              }
             />
           )}
           {temperature !== null && (
@@ -189,6 +128,11 @@ const DeviceDashboardPage: FC = () => {
               metric="Temperature"
               value={`${temperature.toString()} °C`}
               badgeColor="green"
+              onClick={() =>
+                void dispatch(
+                  loadChart({ chartType: 'temp', deviceId: module.device_id })
+                )
+              }
             />
           )}
           {humidity !== null && (
@@ -197,11 +141,39 @@ const DeviceDashboardPage: FC = () => {
               metric="Humidity"
               value={`${humidity.toString()} %`}
               badgeColor="green"
+              onClick={() =>
+                void dispatch(
+                  loadChart({ chartType: 'hum', deviceId: module.device_id })
+                )
+              }
             />
           )}
         </>
       );
     }
+  };
+
+  const getChart = () => {
+    if (chartLoadingStatus === 'loading') {
+      return (
+        <Flex justify="center" align="center" height={300}>
+          <Spinner />
+        </Flex>
+      );
+    }
+    if (!chartType) {
+      return <div>Select metric</div>;
+    }
+
+    return (
+      <ReactECharts
+        style={{ flex: 1 }}
+        option={getIAQTimeseriosOptions(
+          chartData,
+          IAQComponentsConfig[chartType]
+        )}
+      />
+    );
   };
 
   if (modulesStatus === 'loading') {
@@ -248,24 +220,24 @@ const DeviceDashboardPage: FC = () => {
           </span>
         </p>
       </Flex>
-      <Flex wrap="wrap" gap={4}>
+      <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Score</Heading>
-          <ReactECharts option={getGaugeOptions(80)} />
+          <ReactECharts option={getIAQGaugeOptions(80)} />
           <div>Summary text</div>
         </DashboardCard>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Components</Heading>
           <p style={{ marginBottom: theme.spacing.sm }}>
-            Metrics contributing to the overall IAQ score{' '}
+            Metrics contributing to the overall IAQ score
           </p>
 
-          {getIAQComponents()}
+          {getIAQComponents(module)}
         </DashboardCard>
       </Flex>
       <Flex direction="column">
         <Heading>Trend</Heading>
-        {/* <ReactECharts style={{ flex: 1 }} option={getChartOption(data)} /> */}
+        {getChart()}
       </Flex>
     </Container>
   );

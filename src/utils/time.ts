@@ -7,7 +7,7 @@ export const formatTime = (seconds: number): string => {
   return `${minutes}:${secondsFormated}`;
 };
 
-export const formatDate = (iso: string) =>
+export const formatDate = (iso: string | number) =>
   new Intl.DateTimeFormat('uk-UA', {
     dateStyle: 'short',
     timeStyle: 'short',

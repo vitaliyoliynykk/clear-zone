@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 
 import { WifiNetworkModel } from '@/shared/models/bluetooth/bt-network-model';
 import { LoadingStatus } from '@/shared/models/loading-status-model';
@@ -21,16 +26,28 @@ const initialState: ConnectModuleState = {
   currentStep: 0,
   linkModuleStatus: 'empty',
 };
+const selectConnectModuleState = (state: RootState) => state.connectModule;
 
-const selectConnectedDevice = (state: RootState) =>
-  state.connectModule.connectedDevice;
-const selectConnectedDeviceId = (state: RootState) =>
-  state.connectModule.connectedDeviceId;
-const selectCurrentNetwork = (state: RootState) =>
-  state.connectModule.selectedNetwork;
-const selectCurrentStep = (state: RootState) => state.connectModule.currentStep;
-const selectModuleLinkingStatus = (state: RootState) =>
-  state.connectModule.linkModuleStatus;
+const selectConnectedDevice = createSelector(
+  selectConnectModuleState,
+  (state) => state.connectedDevice
+);
+const selectConnectedDeviceId = createSelector(
+  selectConnectModuleState,
+  (state) => state.connectedDeviceId
+);
+const selectCurrentNetwork = createSelector(
+  selectConnectModuleState,
+  (state) => state.selectedNetwork
+);
+const selectCurrentStep = createSelector(
+  selectConnectModuleState,
+  (state) => state.currentStep
+);
+const selectModuleLinkingStatus = createSelector(
+  selectConnectModuleState,
+  (state) => state.linkModuleStatus
+);
 
 export const linkModule = createAsyncThunk<
   MessageResponseModel,

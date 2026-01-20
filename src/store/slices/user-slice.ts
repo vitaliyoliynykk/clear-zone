@@ -1,4 +1,9 @@
-import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+  PayloadAction,
+} from '@reduxjs/toolkit';
 
 import { LoadingStatus } from '@/shared/models/loading-status-model';
 import { UpdateUserRequestModel } from '@/shared/models/requests/update-user-request-model';
@@ -23,9 +28,13 @@ const initialState: UserState = {
   user: null,
 };
 
-const selectUser = (state: RootState) => state.user.user;
-const selectUserIsLoading = (state: RootState) =>
-  state.user.status === 'loading';
+const selectUserState = (state: RootState) => state.user;
+
+const selectUser = createSelector(selectUserState, (state) => state.user);
+const selectUserIsLoading = createSelector(
+  selectUserState,
+  (state) => state.status === 'loading'
+);
 
 export const signIn = createAsyncThunk<
   SignInResponseModel,

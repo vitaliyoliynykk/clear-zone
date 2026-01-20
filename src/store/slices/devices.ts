@@ -1,6 +1,7 @@
 import {
   createAsyncThunk,
   createEntityAdapter,
+  createSelector,
   createSlice,
   PayloadAction,
 } from '@reduxjs/toolkit';
@@ -33,7 +34,12 @@ export const deleteModule = createAsyncThunk<ModuleModel, { moduleId: string }>(
 const moduleSelectors = moduleAdapter.getSelectors(
   (state: RootState) => state.devices
 );
-const selectModulesStatus = (state: RootState) => state.devices.status;
+
+const selectDevicesState = (state: RootState) => state.devices;
+const selectModulesStatus = createSelector(
+  selectDevicesState,
+  (state) => state.status
+);
 
 const devicesSlice = createSlice({
   name: 'dashboard',

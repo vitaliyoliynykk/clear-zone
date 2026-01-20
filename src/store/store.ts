@@ -2,6 +2,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { connectModuleReducer } from './slices/connect-module.slice';
+import { deviceDashboardReducer } from './slices/device-dashboard.slice';
 import { devicesReducer } from './slices/devices';
 import { userReducer } from './slices/user-slice';
 
@@ -9,6 +10,7 @@ const rootRedcuer = combineReducers({
   user: userReducer,
   connectModule: connectModuleReducer,
   devices: devicesReducer,
+  deviceDashboard: deviceDashboardReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) =>
