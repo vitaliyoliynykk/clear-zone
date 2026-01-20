@@ -1,7 +1,7 @@
 import { Badge } from '@chakra-ui/react';
 import { FC } from 'react';
 
-import { theme } from '@/utils/theme';
+import { TabContainer } from './styled-component';
 
 const MetricTabComponent: FC<{
   metric: string;
@@ -11,23 +11,12 @@ const MetricTabComponent: FC<{
   onClick?: () => void;
 }> = ({ metric, value, badgeColor = 'green', status, onClick }) => {
   return (
-    <div
-      style={{
-        padding: 8,
-        borderRadius: theme.radius.medium,
-        borderColor: theme.colors.grayDark,
-        backgroundColor: theme.colors.white,
-        borderWidth: 1,
-        marginBottom: theme.spacing.sm,
-        cursor: 'pointer',
-      }}
-      onClick={onClick}
-    >
+    <TabContainer onClick={onClick}>
       <p style={{ fontWeight: 'bold' }}>{metric}</p>
       <p>
         {value} <Badge colorPalette={badgeColor}>{status}</Badge>
       </p>
-    </div>
+    </TabContainer>
   );
 };
 
