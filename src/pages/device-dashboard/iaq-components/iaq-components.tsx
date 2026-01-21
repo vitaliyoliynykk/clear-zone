@@ -22,7 +22,7 @@ export const IAQComponents: FC<{
 
   const co2State = resolveIAQ('co2', co2 ?? -1);
   const tempState = resolveIAQ('temp', temp ?? -1);
-  const humState = resolveIAQ('hum', temp ?? -1);
+  const humState = resolveIAQ('hum', hum ?? -1);
 
   if (moduleNetworkStatus === 'offline') {
     return (
