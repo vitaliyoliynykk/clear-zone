@@ -29,6 +29,7 @@ import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { IAQComponentsConfig } from '@/utils/iaq-components-config';
 import { theme } from '@/utils/theme';
+import { formatDate } from '@/utils/time';
 
 import MetricTabComponent from './metric-tab/metric-tab-component';
 import { DashboardCard } from './styled-component';
@@ -232,6 +233,8 @@ const DeviceDashboardPage: FC = () => {
           <NetworkStatusDot status={moduleNetworkStatus} />
           {moduleNetworkStatus}
         </Badge>
+        Updated:{' '}
+        {wsMetricsLastUpdated ? formatDate(wsMetricsLastUpdated, 'time') : '--'}
       </Flex>
       <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
@@ -244,7 +247,6 @@ const DeviceDashboardPage: FC = () => {
           <p style={{ marginBottom: theme.spacing.sm }}>
             Metrics contributing to the overall IAQ score
           </p>
-
           {getIAQComponents(module)}
         </DashboardCard>
       </Flex>
