@@ -1,1 +1,1 @@
-export type ModuleNetworkStatus = 'online' | 'offline';
+export type ModuleNetworkStatus = 'online' | 'offline' | 'pending';

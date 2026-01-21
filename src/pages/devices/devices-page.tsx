@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router';
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
 import { useIsPWA } from '@/shared/hooks/useIsPWA';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
+import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model';
 import { WsDataModel } from '@/shared/models/ws-data-model';
 import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
 import { useAppSelector } from '@/store/store';
@@ -20,7 +21,7 @@ const DevicesPage: FC = () => {
   const isPWA = useIsPWA();
   const navigate = useNavigate();
   const [modulesStatuses, setModulesStatuses] = useState<
-    Record<string, 'online' | 'offline'>
+    Record<string, ModuleNetworkStatus | undefined>
   >({});
   const [co2, setModulesCo2] = useState<Record<string, number>>({});
   const [temp, setModulesTemp] = useState<
@@ -30,22 +31,22 @@ const DevicesPage: FC = () => {
   const onWsData = (wsData: WsDataModel) => {
     console.log('WS DATA', wsData);
 
-    if (wsData.type === 'status') {
-      if (modules.find((module) => module.device_id === wsData.deviceId)) {
+    const module = modules.find(
+      (module) => module.device_id === wsData.deviceId
+    );
+
+    if (module) {
+      if (wsData.type === 'status') {
         setModulesStatuses((prev) => ({
           ...prev,
           [wsData.deviceId]: wsData.data.status,
         }));
-      }
-    } else if (wsData.type === 'co2') {
-      if (modules.find((module) => module.device_id === wsData.deviceId)) {
+      } else if (wsData.type === 'co2') {
         setModulesCo2((prev) => ({
           ...prev,
           [wsData.deviceId]: wsData.data.co2,
         }));
-      }
-    } else {
-      if (modules.find((module) => module.device_id === wsData.deviceId)) {
+      } else {
         setModulesTemp((prev) => ({
           ...prev,
           [wsData.deviceId]: wsData.data,
@@ -87,7 +88,7 @@ const DevicesPage: FC = () => {
           <DeviceTabComponent
             key={module.device_id}
             name={module.name}
-            status={modulesStatuses[module.device_id]}
+            status={modulesStatuses[module.device_id] ?? 'pending'}
             co2={co2[module.device_id]}
             temp={temp[module.device_id]?.temp}
             hum={temp[module.device_id]?.hum}

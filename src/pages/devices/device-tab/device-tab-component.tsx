@@ -3,12 +3,13 @@ import ReactECharts from 'echarts-for-react';
 import { FC } from 'react';
 
 import NetworkStatusDot from '@/shared/components/network-status-dot/network-status-dot';
+import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model';
 
 import { DeviceContainer } from '../styled-components';
 
 const DeviceTabComponent: FC<{
   name: string;
-  status: 'online' | 'offline';
+  status: ModuleNetworkStatus;
   co2?: number;
   temp?: number;
   hum?: number;

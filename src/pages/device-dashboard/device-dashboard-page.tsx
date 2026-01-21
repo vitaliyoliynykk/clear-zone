@@ -29,7 +29,6 @@ import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { IAQComponentsConfig } from '@/utils/iaq-components-config';
 import { theme } from '@/utils/theme';
-import { formatDate } from '@/utils/time';
 
 import MetricTabComponent from './metric-tab/metric-tab-component';
 import { DashboardCard } from './styled-component';
@@ -54,10 +53,7 @@ const DeviceDashboardPage: FC = () => {
     deviceId ? moduleSelectors.selectById(state, deviceId) : null
   );
   const [moduleNetworkStatus, setModuleNetworkStatus] =
-    useState<ModuleNetworkStatus>('offline');
-  const [wsStatusLastUpdated, setWsStatusLastUpdated] = useState<number | null>(
-    null
-  );
+    useState<ModuleNetworkStatus>('pending');
   const [wsMetricsLastUpdated, setWsMetricsLastUpdated] = useState<
     number | null
   >(null);
@@ -66,11 +62,8 @@ const DeviceDashboardPage: FC = () => {
   const [humidity, setHumidity] = useState<number | null>(null);
 
   const onWsData = (wsData: WsDataModel) => {
-    console.log('WS DATA', wsData);
-
     if (wsData.deviceId === module?.device_id) {
       if (wsData.type === 'status') {
-        setWsStatusLastUpdated(new Date().getTime());
         setModuleNetworkStatus(wsData.data.status);
       } else {
         setWsMetricsLastUpdated(wsData.ts);
@@ -239,15 +232,6 @@ const DeviceDashboardPage: FC = () => {
           <NetworkStatusDot status={moduleNetworkStatus} />
           {moduleNetworkStatus}
         </Badge>
-        <p>
-          Last Updated:
-          <span>
-            {' '}
-            {wsStatusLastUpdated !== null
-              ? formatDate(new Date(wsStatusLastUpdated).toISOString())
-              : 'pending...'}
-          </span>
-        </p>
       </Flex>
       <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
