@@ -1,0 +1,102 @@
+import { Threshold } from '@/shared/models/iaq/iaq-threshold-model';
+import { SensorsTypesModel } from '@/shared/models/sensors-types-model';
+
+import { theme } from '../theme';
+
+export const IAQ_THRESHOLDS = {
+  temp: [
+    { max: 18, color: theme.colors.green, label: 'Cool', badgeColor: 'green' },
+    {
+      min: 18,
+      max: 22,
+      color: theme.colors.greenLight,
+      badgeColor: 'green',
+      label: 'Optimal',
+    },
+    {
+      min: 22,
+      max: 26,
+      color: theme.colors.orange,
+      badgeColor: 'orange',
+      label: 'Warm',
+    },
+    { min: 26, color: theme.colors.red, badgeColor: 'red', label: 'Hot' },
+  ],
+  hum: [
+    {
+      max: 30,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Too dry',
+    },
+    {
+      min: 30,
+      max: 40,
+      color: theme.colors.orange,
+      badgeColor: 'orange',
+      label: 'Dry',
+    },
+    {
+      min: 40,
+      max: 60,
+      color: theme.colors.green,
+      badgeColor: 'green',
+      label: 'Optimal',
+    },
+    {
+      min: 60,
+      max: 70,
+      color: theme.colors.orange,
+      badgeColor: 'orange',
+      label: 'Humid',
+    },
+    {
+      min: 70,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Too humid',
+    },
+  ],
+  co2: [
+    {
+      max: 600,
+      color: theme.colors.green,
+      badgeColor: 'green',
+      label: 'Excelent',
+    },
+    {
+      min: 600,
+      max: 800,
+      color: theme.colors.greenLight,
+      badgeColor: 'green',
+      label: 'Good',
+    },
+    {
+      min: 800,
+      max: 1000,
+      color: theme.colors.orange,
+      badgeColor: 'orange',
+      label: 'Moderate',
+    },
+    {
+      min: 1000,
+      max: 2000,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Bad',
+    },
+  ],
+} satisfies Record<SensorsTypesModel, Threshold[]>;
+
+export function resolveIAQ(
+  type: keyof typeof IAQ_THRESHOLDS,
+  value: number
+): Threshold {
+  return (
+    IAQ_THRESHOLDS[type].find(
+      (t) =>
+        (t.min === undefined || value >= t.min) &&
+        (t.max === undefined || value < t.max)
+    ) ?? { color: theme.colors.gray, label: '--', badgeColor: 'gray' }
+  );
+}

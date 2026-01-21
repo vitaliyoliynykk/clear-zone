@@ -1,6 +1,6 @@
 import { formatDate } from '@/utils/time';
 
-import { IAQComponentConfigModel } from '../models/iaq-component-config-model';
+import { IAQComponentConfigModel } from '../models/iaq/iaq-component-config-model';
 import { TimeseriesItemModel } from '../models/responses/timeseries-model';
 
 export const getIAQTimeseriosOptions = (
@@ -24,27 +24,7 @@ export const getIAQTimeseriosOptions = (
     },
     visualMap: {
       show: false,
-      pieces: [
-        {
-          lte: 600,
-          color: '#2b8e00ff',
-        },
-        {
-          gt: 600,
-          lte: 800,
-          color: '#8da300ff',
-        },
-        {
-          gt: 800,
-          lte: 1000,
-          color: '#d89f00ff',
-        },
-        {
-          gt: 1000,
-          lte: 2000,
-          color: '#d80e00ff',
-        },
-      ],
+      pieces: config.visualMap,
     },
     series: [
       {

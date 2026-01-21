@@ -25,9 +25,14 @@ export const theme = {
     gray: '#c3c4c5',
     grayDark: '#6e7a87',
 
-    greenLight: '#e6f4ea',
+    greenLightest: '#e6f4ea',
+    greenLight: '#8da300ff',
     green: '#4caf50',
     greenDark: '#2e7d32',
+
+    orange: '#d89f00ff',
+
+    red: '#d80e00ff',
   },
 };
 

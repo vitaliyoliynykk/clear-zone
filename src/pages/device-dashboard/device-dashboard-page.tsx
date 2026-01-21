@@ -17,7 +17,6 @@ import { getIAQGaugeOptions } from '@/shared/e-charts/iaq-gauge-options';
 import { getIAQTimeseriosOptions } from '@/shared/e-charts/iaq-timeseries-chart-options';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model';
-import { ModuleModel } from '@/shared/models/responses/module-model';
 import { WsDataModel } from '@/shared/models/ws-data-model';
 import {
   loadChart,
@@ -27,11 +26,11 @@ import {
 } from '@/store/slices/device-dashboard.slice';
 import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import { IAQComponentsConfig } from '@/utils/iaq-components-config';
+import { IAQComponentsConfig } from '@/utils/iaq/iaq-components-config';
 import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
 
-import MetricTabComponent from './metric-tab/metric-tab-component';
+import { IAQComponents } from './iaq-components/iaq-components';
 import { DashboardCard } from './styled-component';
 
 const timeframes = [
@@ -59,8 +58,8 @@ const DeviceDashboardPage: FC = () => {
     number | null
   >(null);
   const [co2, setCo2] = useState<number | null>(null);
-  const [temperature, setTemperature] = useState<number | null>(null);
-  const [humidity, setHumidity] = useState<number | null>(null);
+  const [temp, setTemperature] = useState<number | null>(null);
+  const [hum, setHumidity] = useState<number | null>(null);
 
   const onWsData = (wsData: WsDataModel) => {
     if (wsData.deviceId === module?.device_id) {
@@ -91,70 +90,6 @@ const DeviceDashboardPage: FC = () => {
       );
     }
   }, [module, dispatch]);
-
-  const getIAQComponents = (module: ModuleModel) => {
-    if (moduleNetworkStatus === 'offline') {
-      return (
-        <Flex justify="center" align="center" flex={1}>
-          Module is offline. No current data
-        </Flex>
-      );
-    } else {
-      if (wsMetricsLastUpdated === null) {
-        return (
-          <Flex justify="center" align="center" direction="column" flex={1}>
-            <p>Current metrics are loading.</p>
-            <p>It can take up to a minute</p>
-            <Spinner style={{ marginTop: theme.spacing.sm }} />
-          </Flex>
-        );
-      }
-
-      return (
-        <>
-          {co2 !== null && (
-            <MetricTabComponent
-              status="Good"
-              metric="CO2"
-              value={`${co2.toString()} ppm`}
-              badgeColor="green"
-              onClick={() =>
-                void dispatch(
-                  loadChart({ chartType: 'co2', deviceId: module.device_id })
-                )
-              }
-            />
-          )}
-          {temperature !== null && (
-            <MetricTabComponent
-              status="Good"
-              metric="Temperature"
-              value={`${temperature.toString()} °C`}
-              badgeColor="green"
-              onClick={() =>
-                void dispatch(
-                  loadChart({ chartType: 'temp', deviceId: module.device_id })
-                )
-              }
-            />
-          )}
-          {humidity !== null && (
-            <MetricTabComponent
-              status="Good"
-              metric="Humidity"
-              value={`${humidity.toString()} %`}
-              badgeColor="green"
-              onClick={() =>
-                void dispatch(
-                  loadChart({ chartType: 'hum', deviceId: module.device_id })
-                )
-              }
-            />
-          )}
-        </>
-      );
-    }
-  };
 
   const getChart = () => {
     if (chartLoadingStatus === 'loading') {
@@ -247,7 +182,12 @@ const DeviceDashboardPage: FC = () => {
           <p style={{ marginBottom: theme.spacing.sm }}>
             Metrics contributing to the overall IAQ score
           </p>
-          {getIAQComponents(module)}
+          <IAQComponents
+            moduleNetworkStatus={moduleNetworkStatus}
+            wsMetricsLastUpdated={wsMetricsLastUpdated}
+            metrics={{ co2, hum, temp }}
+            deviceId={module.device_id}
+          />
         </DashboardCard>
       </Flex>
       <Flex direction="column">
