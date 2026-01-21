@@ -4,6 +4,7 @@ import {
   Container,
   Flex,
   Heading,
+  SegmentGroup,
   Spinner,
 } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
@@ -32,6 +33,14 @@ import { formatDate } from '@/utils/time';
 
 import MetricTabComponent from './metric-tab/metric-tab-component';
 import { DashboardCard } from './styled-component';
+
+const timeframes = [
+  { label: '4h' },
+  { label: '8h' },
+  { label: '12h' },
+  { label: '24h' },
+  { label: '48h' },
+];
 
 const DeviceDashboardPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -166,13 +175,33 @@ const DeviceDashboardPage: FC = () => {
     }
 
     return (
-      <ReactECharts
-        style={{ flex: 1 }}
-        option={getIAQTimeseriosOptions(
-          chartData,
-          IAQComponentsConfig[chartType]
-        )}
-      />
+      <div>
+        <SegmentGroup.Root
+          defaultValue="4h"
+          colorPalette="red"
+          bg="colorPalette.50"
+        >
+          <SegmentGroup.Indicator />
+          {timeframes.map((value, index) => (
+            <SegmentGroup.Item key={index} value={value.label}>
+              <SegmentGroup.ItemText
+                _checked={{ color: 'colorPalette.fg', fontWeight: 'medium' }}
+              >
+                {value.label}
+              </SegmentGroup.ItemText>
+              <SegmentGroup.ItemHiddenInput />
+            </SegmentGroup.Item>
+          ))}
+        </SegmentGroup.Root>
+
+        <ReactECharts
+          style={{ flex: 1 }}
+          option={getIAQTimeseriosOptions(
+            chartData,
+            IAQComponentsConfig[chartType]
+          )}
+        />
+      </div>
     );
   };
 
@@ -236,7 +265,7 @@ const DeviceDashboardPage: FC = () => {
         </DashboardCard>
       </Flex>
       <Flex direction="column">
-        <Heading>Trend</Heading>
+        <Heading style={{ marginBottom: theme.spacing.sm }}>Trend</Heading>
         {getChart()}
       </Flex>
     </Container>
