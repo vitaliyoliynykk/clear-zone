@@ -40,9 +40,9 @@ const selectChartLoadingStatus = createSelector(
 
 export const loadChart = createAsyncThunk<
   TimeseriesItemModel[],
-  { chartType: SensorsTypesModel; deviceId: string }
->('device-dashboard/load-chart', ({ chartType, deviceId }) =>
-  getSensorAgrregatedTimeseriesRequest(deviceId, chartType)
+  { chartType: SensorsTypesModel; deviceId: string; hoursLookback: number }
+>('device-dashboard/load-chart', ({ chartType, deviceId, hoursLookback }) =>
+  getSensorAgrregatedTimeseriesRequest(deviceId, chartType, hoursLookback)
 );
 
 export const deviceDashboardSlice = createSlice({

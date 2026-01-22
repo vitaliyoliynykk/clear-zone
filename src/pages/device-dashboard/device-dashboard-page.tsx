@@ -33,12 +33,11 @@ import { formatDate } from '@/utils/time';
 import { IAQComponents } from './iaq-components/iaq-components';
 import { DashboardCard } from './styled-component';
 
-const timeframes = [
-  { label: '4h' },
-  { label: '8h' },
-  { label: '12h' },
-  { label: '24h' },
-  { label: '48h' },
+const TIME_FILTER = [
+  { label: '8h', value: '8' },
+  { label: '24h', value: '24' },
+  { label: '2d', value: '48' },
+  { label: '1w', value: '168' },
 ];
 
 const DeviceDashboardPage: FC = () => {
@@ -52,6 +51,7 @@ const DeviceDashboardPage: FC = () => {
   const module = useAppSelector((state) =>
     deviceId ? moduleSelectors.selectById(state, deviceId) : null
   );
+
   const [moduleNetworkStatus, setModuleNetworkStatus] =
     useState<ModuleNetworkStatus>('pending');
   const [wsMetricsLastUpdated, setWsMetricsLastUpdated] = useState<
@@ -60,6 +60,7 @@ const DeviceDashboardPage: FC = () => {
   const [co2, setCo2] = useState<number | null>(null);
   const [temp, setTemperature] = useState<number | null>(null);
   const [hum, setHumidity] = useState<number | null>(null);
+  const [chartTimeFilter, setChartTimeFilter] = useState('24');
 
   const onWsData = (wsData: WsDataModel) => {
     if (wsData.deviceId === module?.device_id) {
@@ -86,7 +87,11 @@ const DeviceDashboardPage: FC = () => {
   useEffect(() => {
     if (module) {
       void dispatch(
-        loadChart({ chartType: 'co2', deviceId: module.device_id })
+        loadChart({
+          chartType: 'co2',
+          deviceId: module.device_id,
+          hoursLookback: 8,
+        })
       );
     }
   }, [module, dispatch]);
@@ -104,33 +109,13 @@ const DeviceDashboardPage: FC = () => {
     }
 
     return (
-      <div>
-        <SegmentGroup.Root
-          defaultValue="4h"
-          colorPalette="red"
-          bg="colorPalette.50"
-        >
-          <SegmentGroup.Indicator />
-          {timeframes.map((value, index) => (
-            <SegmentGroup.Item key={index} value={value.label}>
-              <SegmentGroup.ItemText
-                _checked={{ color: 'colorPalette.fg', fontWeight: 'medium' }}
-              >
-                {value.label}
-              </SegmentGroup.ItemText>
-              <SegmentGroup.ItemHiddenInput />
-            </SegmentGroup.Item>
-          ))}
-        </SegmentGroup.Root>
-
-        <ReactECharts
-          style={{ flex: 1 }}
-          option={getIAQTimeseriosOptions(
-            chartData,
-            IAQComponentsConfig[chartType]
-          )}
-        />
-      </div>
+      <ReactECharts
+        style={{ flex: 1 }}
+        option={getIAQTimeseriosOptions(
+          chartData,
+          IAQComponentsConfig[chartType]
+        )}
+      />
     );
   };
 
@@ -183,17 +168,52 @@ const DeviceDashboardPage: FC = () => {
             Metrics contributing to the overall IAQ score
           </p>
           <IAQComponents
-            moduleNetworkStatus={moduleNetworkStatus}
             wsMetricsLastUpdated={wsMetricsLastUpdated}
             metrics={{ co2, hum, temp }}
             deviceId={module.device_id}
+            hoursLookback={+chartTimeFilter}
           />
         </DashboardCard>
       </Flex>
-      <Flex direction="column">
-        <Heading style={{ marginBottom: theme.spacing.sm }}>Trend</Heading>
+      <Box>
+        <Heading>Trend</Heading>
+        <p style={{ marginBottom: theme.spacing.sm }}>
+          How air quality metrics change over time
+        </p>
+
+        <SegmentGroup.Root
+          value={chartTimeFilter.toString()}
+          onValueChange={(value) => {
+            setChartTimeFilter(value.value);
+          }}
+          disabled={!chartType}
+        >
+          <SegmentGroup.Indicator />
+          {TIME_FILTER.map(({ value, label }, index) => (
+            <SegmentGroup.Item
+              key={index}
+              value={value.toString()}
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (chartType) {
+                  void dispatch(
+                    loadChart({
+                      chartType,
+                      deviceId: module.device_id,
+                      hoursLookback: Number(value),
+                    })
+                  );
+                }
+              }}
+            >
+              <SegmentGroup.ItemText>{label}</SegmentGroup.ItemText>
+              <SegmentGroup.ItemHiddenInput />
+            </SegmentGroup.Item>
+          ))}
+        </SegmentGroup.Root>
+
         {getChart()}
-      </Flex>
+      </Box>
     </Container>
   );
 };

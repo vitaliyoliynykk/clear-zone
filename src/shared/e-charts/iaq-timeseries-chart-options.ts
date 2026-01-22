@@ -14,6 +14,9 @@ export const getIAQTimeseriosOptions = (
     title: {
       text: `${config.name} (${config.unit})`,
     },
+    tooltip: {
+      trigger: 'axis',
+    },
     xAxis: {
       type: 'category',
       data: data.map(({ date }) => formatDate(date)),
@@ -21,6 +24,9 @@ export const getIAQTimeseriosOptions = (
     yAxis: {
       type: 'value',
       min: Math.floor(minValue - config.padding),
+      tooltip: {
+        show: true,
+      },
     },
     visualMap: {
       show: false,
@@ -31,6 +37,9 @@ export const getIAQTimeseriosOptions = (
         data: values,
         type: 'line',
         smooth: true,
+        markLine: {
+          data: [{ type: 'average', name: 'Avg' }],
+        },
       },
     ],
   };

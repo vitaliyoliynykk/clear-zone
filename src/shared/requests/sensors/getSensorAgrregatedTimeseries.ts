@@ -4,10 +4,12 @@ import api from '@/utils/api';
 
 export const getSensorAgrregatedTimeseriesRequest = async (
   moduleId: string,
-  sensorType: SensorsTypesModel
+  sensorType: SensorsTypesModel,
+  hoursLookback: number
 ): Promise<TimeseriesItemModel[]> => {
   const res = await api.get<TimeseriesItemModel[]>(
-    `measurement/aggregated/${moduleId}/${sensorType}`
+    `measurement/aggregated/${moduleId}/${sensorType}`,
+    { params: { hoursLookback } }
   );
 
   return res.data;
