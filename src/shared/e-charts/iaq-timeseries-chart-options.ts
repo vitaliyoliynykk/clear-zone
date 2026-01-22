@@ -37,6 +37,10 @@ export const getIAQTimeseriosOptions = (
         data: values,
         type: 'line',
         smooth: true,
+        symbolSize: 8,
+        lineStyle: {
+          width: 4,
+        },
         markLine: {
           data: [{ type: 'average', name: 'Avg' }],
         },
