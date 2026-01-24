@@ -169,6 +169,7 @@ const DeviceDashboardPage: FC = () => {
           </p>
           <IAQComponents
             wsMetricsLastUpdated={wsMetricsLastUpdated}
+            moduleNetworkStatus={moduleNetworkStatus}
             metrics={{ co2, hum, temp }}
             deviceId={module.device_id}
             hoursLookback={+chartTimeFilter}

@@ -29,6 +29,7 @@ const DevicesPage: FC = () => {
   >({});
 
   const onWsData = (wsData: WsDataModel) => {
+    console.log({ wsData });
     const module = modules.find(
       (module) => module.device_id === wsData.deviceId
     );

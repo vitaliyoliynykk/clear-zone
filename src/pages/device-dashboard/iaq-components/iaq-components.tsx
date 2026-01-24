@@ -1,6 +1,7 @@
 import { Flex, Spinner } from '@chakra-ui/react';
 import { FC } from 'react';
 
+import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model';
 import { SensorsTypesModel } from '@/shared/models/sensors-types-model';
 import { loadChart } from '@/store/slices/device-dashboard.slice';
 import { useAppDispatch } from '@/store/store';
@@ -11,19 +12,26 @@ import MetricTabComponent from '../metric-tab/metric-tab-component';
 
 export const IAQComponents: FC<{
   wsMetricsLastUpdated: number | null;
+  moduleNetworkStatus: ModuleNetworkStatus;
   metrics: Record<SensorsTypesModel, number | null>;
   deviceId: string;
   hoursLookback: number;
-}> = ({ wsMetricsLastUpdated, metrics, deviceId, hoursLookback }) => {
+}> = ({
+  wsMetricsLastUpdated,
+  metrics,
+  deviceId,
+  hoursLookback,
+  moduleNetworkStatus,
+}) => {
   const dispatch = useAppDispatch();
 
   const { hum, temp, co2 } = metrics;
 
-  const co2State = resolveIAQ('co2', co2 ?? -1);
-  const tempState = resolveIAQ('temp', temp ?? -1);
-  const humState = resolveIAQ('hum', hum ?? -1);
+  const co2State = resolveIAQ('co2', co2);
+  const tempState = resolveIAQ('temp', temp);
+  const humState = resolveIAQ('hum', hum);
 
-  if (wsMetricsLastUpdated === null) {
+  if (wsMetricsLastUpdated === null && moduleNetworkStatus === 'online') {
     return (
       <Flex justify="center" align="center" direction="column" flex={1}>
         <p>Current metrics are loading.</p>

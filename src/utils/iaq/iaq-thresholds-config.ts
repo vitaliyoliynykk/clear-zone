@@ -87,11 +87,20 @@ export const IAQ_THRESHOLDS = {
     },
   ],
 } satisfies Record<SensorsTypesModel, Threshold[]>;
+const DEFAULT_IAQ: Threshold = {
+  color: theme.colors.gray,
+  label: '--',
+  badgeColor: 'gray',
+};
 
 export function resolveIAQ(
   type: keyof typeof IAQ_THRESHOLDS,
-  value: number
+  value: number | null
 ): Threshold {
+  if (value === null) {
+    return DEFAULT_IAQ;
+  }
+
   return (
     IAQ_THRESHOLDS[type].find(
       (t) =>
