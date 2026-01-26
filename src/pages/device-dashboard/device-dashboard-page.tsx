@@ -57,6 +57,9 @@ const DeviceDashboardPage: FC = () => {
   const [wsMetricsLastUpdated, setWsMetricsLastUpdated] = useState<
     number | null
   >(null);
+  const [wsStatusLastUpdated, setWsStatusLastUpdate] = useState<number | null>(
+    null
+  );
   const [co2, setCo2] = useState<number | null>(null);
   const [temp, setTemperature] = useState<number | null>(null);
   const [hum, setHumidity] = useState<number | null>(null);
@@ -66,6 +69,9 @@ const DeviceDashboardPage: FC = () => {
     if (wsData.deviceId === module?.device_id) {
       if (wsData.type === 'status') {
         setModuleNetworkStatus(wsData.data.status);
+        setWsStatusLastUpdate(wsData.ts);
+
+        console.log('status', wsData);
       } else {
         setWsMetricsLastUpdated(wsData.ts);
       }
@@ -119,6 +125,18 @@ const DeviceDashboardPage: FC = () => {
     );
   };
 
+  const getLastUpdatedTime = (): string => {
+    if (moduleNetworkStatus === 'offline' && wsStatusLastUpdated) {
+      return formatDate(wsStatusLastUpdated, 'time');
+    }
+
+    if (wsMetricsLastUpdated) {
+      return formatDate(wsMetricsLastUpdated, 'time');
+    }
+
+    return '--';
+  };
+
   if (modulesStatus === 'loading') {
     return (
       <Container style={{ height: '100%' }}>
@@ -153,8 +171,7 @@ const DeviceDashboardPage: FC = () => {
           <NetworkStatusDot status={moduleNetworkStatus} />
           {moduleNetworkStatus}
         </Badge>
-        Updated:{' '}
-        {wsMetricsLastUpdated ? formatDate(wsMetricsLastUpdated, 'time') : '--'}
+        Updated: {getLastUpdatedTime()}
       </Flex>
       <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
