@@ -13,6 +13,6 @@ export const TabContainer = styled.div`
   cursor: pointer;
 
   &:hover {
-    background-color: ${theme.colors.grayLight};
+    background-color: ${theme.colors.lightBlue};
   }
 `;
