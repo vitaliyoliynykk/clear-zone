@@ -43,6 +43,7 @@ export const StyledNavLink = styled(NavLink)(({ theme }) => ({
 export const Content = styled.main`
   width: 100%;
   height: 100%;
+  overflow: auto;
 `;
 
 export const NavigationMenu = styled.ul`

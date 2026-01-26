@@ -21,8 +21,6 @@ function SettingsPage() {
   const dispatch = useAppDispatch();
   const user = useSelector(selectUser);
 
-  console.log(user);
-
   const {
     register,
     handleSubmit,

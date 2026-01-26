@@ -8,7 +8,7 @@ import {
   Spinner,
 } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
 import NetworkStatusDot from '@/shared/components/network-status-dot/network-status-dot';
@@ -42,6 +42,7 @@ const TIME_FILTER = [
 
 const DeviceDashboardPage: FC = () => {
   const dispatch = useAppDispatch();
+  const containerRef = useRef<HTMLDivElement>(null);
   const modulesStatus = useAppSelector(selectModulesStatus);
   const chartType = useAppSelector(selectChartType);
   const chartData = useAppSelector(selectChartData);
@@ -70,8 +71,6 @@ const DeviceDashboardPage: FC = () => {
       if (wsData.type === 'status') {
         setModuleNetworkStatus(wsData.data.status);
         setWsStatusLastUpdate(wsData.ts);
-
-        console.log('status', wsData);
       } else {
         setWsMetricsLastUpdated(wsData.ts);
       }
@@ -161,7 +160,7 @@ const DeviceDashboardPage: FC = () => {
   }
 
   return (
-    <Container style={{ height: '100%', overflow: 'auto' }}>
+    <Container>
       <PageHeading>Air Quality Overview - {module.name}</PageHeading>
       <Flex style={{ marginBottom: theme.spacing.sm }}>
         <Badge
@@ -190,10 +189,13 @@ const DeviceDashboardPage: FC = () => {
             metrics={{ co2, hum, temp }}
             deviceId={module.device_id}
             hoursLookback={+chartTimeFilter}
+            onMetricClick={() => {
+              containerRef.current?.scrollIntoView({ behavior: 'smooth' });
+            }}
           />
         </DashboardCard>
       </Flex>
-      <Box>
+      <Box ref={containerRef}>
         <Heading>Trend</Heading>
         <p style={{ marginBottom: theme.spacing.sm }}>
           How air quality metrics change over time

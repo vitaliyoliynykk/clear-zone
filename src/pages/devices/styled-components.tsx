@@ -16,6 +16,8 @@ export const DeviceContainer = styled.div`
   padding: 15px;
   border: 1px solid ${theme.colors.gray};
 
+  box-shadow: ${theme.boxShadow.elevation};
+
   @media (max-width: 768px) {
     width: 100%;
   }

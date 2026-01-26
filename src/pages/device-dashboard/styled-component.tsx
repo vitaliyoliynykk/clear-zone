@@ -10,6 +10,6 @@ export const DashboardCard = styled(Box)`
   border: 1px solid ${theme.colors.gray};
   padding: ${theme.spacing.sm};
   min-width: 350px;
-  display: flex;
-  flex-direction: column;
+
+  box-shadow: ${theme.boxShadow.elevation};
 `;

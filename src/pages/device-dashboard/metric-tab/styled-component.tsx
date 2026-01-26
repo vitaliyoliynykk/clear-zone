@@ -12,6 +12,8 @@ export const TabContainer = styled.div`
   margin-bottom: ${theme.spacing.sm};
   cursor: pointer;
 
+  box-shadow: ${theme.boxShadow.elevation};
+
   &:hover {
     background-color: ${theme.colors.lightBlue};
   }

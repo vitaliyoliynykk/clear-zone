@@ -79,7 +79,7 @@ const DevicesPage: FC = () => {
   }
 
   return (
-    <Container style={{ height: '100%' }}>
+    <Container>
       <PageHeading>My Devices</PageHeading>
       <Box display="flex" style={{ gap: '12px', flexWrap: 'wrap' }}>
         {modules.map((module) => (

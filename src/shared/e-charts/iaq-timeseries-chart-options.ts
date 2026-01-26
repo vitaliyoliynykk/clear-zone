@@ -11,6 +11,7 @@ export const getIAQTimeseriosOptions = (
   const minValue = Math.min(...values);
 
   return {
+    mode: 'dark',
     title: {
       text: `${config.name} (${config.unit})`,
     },

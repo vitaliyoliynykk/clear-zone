@@ -16,12 +16,14 @@ export const IAQComponents: FC<{
   metrics: Record<SensorsTypesModel, number | null>;
   deviceId: string;
   hoursLookback: number;
+  onMetricClick: () => void;
 }> = ({
   wsMetricsLastUpdated,
   metrics,
   deviceId,
   hoursLookback,
   moduleNetworkStatus,
+  onMetricClick,
 }) => {
   const dispatch = useAppDispatch();
 
@@ -49,11 +51,12 @@ export const IAQComponents: FC<{
           metric="CO2"
           value={`${co2 ? co2.toString() : '--'} ppm`}
           badgeColor={co2State.badgeColor}
-          onClick={() =>
+          onClick={() => {
             void dispatch(
               loadChart({ chartType: 'co2', deviceId, hoursLookback })
-            )
-          }
+            );
+            onMetricClick();
+          }}
         />
       }
 
@@ -63,11 +66,12 @@ export const IAQComponents: FC<{
           metric="Temperature"
           value={`${temp ? temp.toString() : '--'} °C`}
           badgeColor={tempState.badgeColor}
-          onClick={() =>
+          onClick={() => {
             void dispatch(
               loadChart({ chartType: 'temp', deviceId, hoursLookback })
-            )
-          }
+            );
+            onMetricClick();
+          }}
         />
       }
 
@@ -77,11 +81,12 @@ export const IAQComponents: FC<{
           metric="Relative Humidity"
           value={`${hum ? hum.toString() : '--'} %`}
           badgeColor={humState.badgeColor}
-          onClick={() =>
+          onClick={() => {
             void dispatch(
               loadChart({ chartType: 'hum', deviceId, hoursLookback })
-            )
-          }
+            );
+            onMetricClick();
+          }}
         />
       }
     </>
