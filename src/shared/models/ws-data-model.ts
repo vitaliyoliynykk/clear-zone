@@ -8,6 +8,7 @@ interface WsPayloads {
   status: { status: ModuleNetworkStatus };
   co2: { co2: number };
   temp: { temp: number; hum: number };
+  pms: { pm10: number; pm25: number; pm100: number };
 }
 
 interface WsBase<K extends keyof WsPayloads> {

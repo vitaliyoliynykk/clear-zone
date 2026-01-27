@@ -64,6 +64,7 @@ const DeviceDashboardPage: FC = () => {
   const [co2, setCo2] = useState<number | null>(null);
   const [temp, setTemperature] = useState<number | null>(null);
   const [hum, setHumidity] = useState<number | null>(null);
+  const [pm25, setPm25] = useState<number | null>(null);
   const [chartTimeFilter, setChartTimeFilter] = useState('24');
 
   const onWsData = (wsData: WsDataModel) => {
@@ -75,12 +76,16 @@ const DeviceDashboardPage: FC = () => {
         setWsMetricsLastUpdated(wsData.ts);
       }
 
-      if (wsData.type === 'co2') {
-        setCo2(wsData.data.co2);
-      }
-      if (wsData.type === 'temp') {
-        setTemperature(wsData.data.temp);
-        setHumidity(wsData.data.hum);
+      switch (wsData.type) {
+        case 'co2':
+          setCo2(wsData.data.co2);
+          break;
+        case 'temp':
+          setTemperature(wsData.data.temp);
+          setHumidity(wsData.data.hum);
+          break;
+        case 'pms':
+          setPm25(wsData.data.pm25);
       }
     }
   };
@@ -186,7 +191,7 @@ const DeviceDashboardPage: FC = () => {
           <IAQComponents
             wsMetricsLastUpdated={wsMetricsLastUpdated}
             moduleNetworkStatus={moduleNetworkStatus}
-            metrics={{ co2, hum, temp }}
+            metrics={{ co2, hum, temp, pm25 }}
             deviceId={module.device_id}
             hoursLookback={+chartTimeFilter}
             onMetricClick={() => {

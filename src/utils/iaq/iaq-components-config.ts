@@ -37,4 +37,14 @@ export const IAQComponentsConfig: Record<
       color: item.color,
     })),
   },
+  pm25: {
+    padding: 2,
+    unit: 'µg/m³',
+    name: 'PM2.5',
+    visualMap: IAQ_THRESHOLDS.pm25.map((item) => ({
+      lte: item.max,
+      gt: item.min,
+      color: item.color,
+    })),
+  },
 };
