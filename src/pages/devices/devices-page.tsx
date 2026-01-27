@@ -34,21 +34,24 @@ const DevicesPage: FC = () => {
     );
 
     if (module) {
-      if (wsData.type === 'status') {
-        setModulesStatuses((prev) => ({
-          ...prev,
-          [wsData.deviceId]: wsData.data.status,
-        }));
-      } else if (wsData.type === 'co2') {
-        setModulesCo2((prev) => ({
-          ...prev,
-          [wsData.deviceId]: wsData.data.co2,
-        }));
-      } else {
-        setModulesTemp((prev) => ({
-          ...prev,
-          [wsData.deviceId]: wsData.data,
-        }));
+      switch (wsData.type) {
+        case 'status':
+          setModulesStatuses((prev) => ({
+            ...prev,
+            [wsData.deviceId]: wsData.data.status,
+          }));
+          break;
+        case 'co2':
+          setModulesCo2((prev) => ({
+            ...prev,
+            [wsData.deviceId]: wsData.data.co2,
+          }));
+          break;
+        case 'temp':
+          setModulesTemp((prev) => ({
+            ...prev,
+            [wsData.deviceId]: wsData.data,
+          }));
       }
     }
   };
