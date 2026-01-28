@@ -121,6 +121,76 @@ export const IAQ_THRESHOLDS = {
       label: 'Very poor',
     },
   ],
+  pm10: [
+    {
+      max: 10,
+      color: theme.colors.green,
+      badgeColor: 'green',
+      label: 'Excellent',
+    },
+    {
+      min: 10,
+      max: 20,
+      color: theme.colors.greenLight,
+      badgeColor: 'green',
+      label: 'Good',
+    },
+    {
+      min: 20,
+      max: 35,
+      color: theme.colors.orange,
+      badgeColor: 'orange',
+      label: 'Moderate',
+    },
+    {
+      min: 35,
+      max: 50,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Poor',
+    },
+    {
+      min: 50,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Very poor',
+    },
+  ],
+  pm100: [
+    {
+      max: 5,
+      color: theme.colors.green,
+      badgeColor: 'green',
+      label: 'Excellent',
+    },
+    {
+      min: 5,
+      max: 10,
+      color: theme.colors.greenLight,
+      badgeColor: 'green',
+      label: 'Good',
+    },
+    {
+      min: 10,
+      max: 20,
+      color: theme.colors.orange,
+      badgeColor: 'orange',
+      label: 'Moderate',
+    },
+    {
+      min: 20,
+      max: 35,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Poor',
+    },
+    {
+      min: 35,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Very poor',
+    },
+  ],
 } satisfies Record<SensorsTypesModel, Threshold[]>;
 const DEFAULT_IAQ: Threshold = {
   color: theme.colors.gray,

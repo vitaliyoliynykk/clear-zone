@@ -27,12 +27,14 @@ export const IAQComponents: FC<{
 }) => {
   const dispatch = useAppDispatch();
 
-  const { hum, temp, co2, pm25 } = metrics;
+  const { hum, temp, co2, pm25, pm10, pm100 } = metrics;
 
   const co2State = resolveIAQ('co2', co2);
   const tempState = resolveIAQ('temp', temp);
   const humState = resolveIAQ('hum', hum);
   const pm25State = resolveIAQ('pm25', pm25);
+  const pm10State = resolveIAQ('pm10', pm10);
+  const pm100State = resolveIAQ('pm100', pm100);
 
   if (wsMetricsLastUpdated === null && moduleNetworkStatus === 'online') {
     return (
@@ -86,6 +88,19 @@ export const IAQComponents: FC<{
       />
 
       <MetricTabComponent
+        status={pm100State.label}
+        metric="PM1.0"
+        value={`${pm100 ? pm100.toString() : '--'} µg/m³`}
+        badgeColor={pm100State.badgeColor}
+        onClick={() => {
+          void dispatch(
+            loadChart({ chartType: 'pm100', deviceId, hoursLookback })
+          );
+          onMetricClick();
+        }}
+      />
+
+      <MetricTabComponent
         status={pm25State.label}
         metric="PM2.5"
         value={`${pm25 ? pm25.toString() : '--'} µg/m³`}
@@ -93,6 +108,19 @@ export const IAQComponents: FC<{
         onClick={() => {
           void dispatch(
             loadChart({ chartType: 'pm25', deviceId, hoursLookback })
+          );
+          onMetricClick();
+        }}
+      />
+
+      <MetricTabComponent
+        status={pm10State.label}
+        metric="PM10.0"
+        value={`${pm10 ? pm10.toString() : '--'} µg/m³`}
+        badgeColor={pm10State.badgeColor}
+        onClick={() => {
+          void dispatch(
+            loadChart({ chartType: 'pm10', deviceId, hoursLookback })
           );
           onMetricClick();
         }}
