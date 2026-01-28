@@ -99,6 +99,7 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
         characteristic = await service.getCharacteristic(
           STATUS_CHARACTERISTIC_ID
         );
+        registrationStatusCharacteristic.current = characteristic;
 
         await characteristic.startNotifications();
 
@@ -138,6 +139,7 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
         );
 
         void characteristic.stopNotifications();
+        registrationStatusCharacteristic.current = null;
       }
     };
   }, [
