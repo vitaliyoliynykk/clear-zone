@@ -8,14 +8,19 @@ import { useIsPWA } from '@/shared/hooks/useIsPWA';
 import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model';
 import { WsDataModel } from '@/shared/models/ws-data-model';
-import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
-import { useAppSelector } from '@/store/store';
+import {
+  loadModulesList,
+  moduleSelectors,
+  selectModulesStatus,
+} from '@/store/slices/devices';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import { ConnectModuleDialog } from './connect-module-dialog/connect-module-dialog';
 import DeviceTabComponent from './device-tab/device-tab-component';
 import { DeviceContainer } from './styled-components';
 
 const DevicesPage: FC = () => {
+  const dispatch = useAppDispatch();
   const modules = useAppSelector(moduleSelectors.selectAll);
   const status = useAppSelector(selectModulesStatus);
   const isPWA = useIsPWA();
@@ -99,7 +104,11 @@ const DevicesPage: FC = () => {
           />
         ))}
         {!isPWA && (
-          <ConnectModuleDialog>
+          <ConnectModuleDialog
+            onClose={() => {
+              void dispatch(loadModulesList());
+            }}
+          >
             <DeviceContainer>
               <Box display="flex" flexDirection="column" alignItems="center">
                 <IoAdd style={{ height: 50, width: 50, marginBottom: 4 }} />

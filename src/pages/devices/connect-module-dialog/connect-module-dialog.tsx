@@ -25,7 +25,6 @@ import {
   selectCurrentStep,
   selectModuleLinkingStatus,
 } from '@/store/slices/connect-module.slice';
-import { loadModulesList } from '@/store/slices/devices';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import ModuleRegistrationComponent from '../connection-steps/module-registration/module-registration';
@@ -49,9 +48,10 @@ const steps = [
   },
 ];
 
-export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
-  children,
-}) => {
+export const ConnectModuleDialog: FC<{
+  children: ReactNode;
+  onClose: () => void;
+}> = ({ children, onClose }) => {
   const dispatch = useAppDispatch();
   const currentStep = useAppSelector(selectCurrentStep);
   const connectedDevice = useAppSelector(selectConnectedDevice);
@@ -157,7 +157,6 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
       });
 
       setOpen(false);
-      void dispatch(loadModulesList());
     } else if (moduleLinkingStatus === 'error') {
       toaster.create({
         description: `Registration error. Please repeat the process`,
@@ -175,6 +174,7 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
     }
 
     dispatch(resetConnectionState());
+    onClose();
   };
 
   return (
