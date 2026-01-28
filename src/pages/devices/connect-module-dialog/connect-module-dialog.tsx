@@ -25,6 +25,7 @@ import {
   selectCurrentStep,
   selectModuleLinkingStatus,
 } from '@/store/slices/connect-module.slice';
+import { loadModulesList } from '@/store/slices/devices';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import ModuleRegistrationComponent from '../connection-steps/module-registration/module-registration';
@@ -153,6 +154,7 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
         duration: 4000,
       });
 
+      void dispatch(loadModulesList());
       setOpen(false);
     } else if (moduleLinkingStatus === 'error') {
       toaster.create({
@@ -163,7 +165,7 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
 
       setOpen(false);
     }
-  }, [moduleLinkingStatus]);
+  }, [moduleLinkingStatus, dispatch]);
 
   const onDialogClose = () => {
     if (connectedDevice) {
