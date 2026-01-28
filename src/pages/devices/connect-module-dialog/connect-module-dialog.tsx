@@ -154,8 +154,8 @@ export const ConnectModuleDialog: FC<{ children: ReactNode }> = ({
         duration: 4000,
       });
 
-      void dispatch(loadModulesList());
       setOpen(false);
+      void dispatch(loadModulesList());
     } else if (moduleLinkingStatus === 'error') {
       toaster.create({
         description: `Registration error. Please repeat the process`,
