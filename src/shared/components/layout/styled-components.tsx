@@ -23,6 +23,9 @@ export const Navigation = styled.nav(({ theme }) => ({
   display: 'flex',
   justifyContent: 'space-between',
   alignItems: 'center',
+  ' @media (max-width: 768px)': {
+    paddingBottom: theme.spacing.md,
+  },
 }));
 
 export const StyledNavLink = styled(NavLink)(({ theme }) => ({
