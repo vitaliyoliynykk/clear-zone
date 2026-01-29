@@ -31,9 +31,10 @@ import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
 
 import { IAQComponents } from './iaq-components/iaq-components';
-import { DashboardCard } from './styled-component';
+import { CardContainer, DashboardCard } from './styled-component';
 
 const TIME_FILTER = [
+  { label: '2h', value: '8' },
   { label: '8h', value: '8' },
   { label: '24h', value: '24' },
   { label: '2d', value: '48' },
@@ -113,9 +114,11 @@ const DeviceDashboardPage: FC = () => {
   const getChart = () => {
     if (chartLoadingStatus === 'loading') {
       return (
-        <Flex justify="center" align="center" height={300}>
-          <Spinner />
-        </Flex>
+        <CardContainer style={{ height: 300 }}>
+          <Flex justify="center" align="center" height="100%">
+            <Spinner />
+          </Flex>
+        </CardContainer>
       );
     }
     if (!chartType) {
@@ -123,13 +126,15 @@ const DeviceDashboardPage: FC = () => {
     }
 
     return (
-      <ReactECharts
-        style={{ flex: 1 }}
-        option={getIAQTimeseriosOptions(
-          chartData,
-          IAQComponentsConfig[chartType]
-        )}
-      />
+      <CardContainer>
+        <ReactECharts
+          style={{ flex: 1 }}
+          option={getIAQTimeseriosOptions(
+            chartData,
+            IAQComponentsConfig[chartType]
+          )}
+        />
+      </CardContainer>
     );
   };
 
@@ -184,8 +189,10 @@ const DeviceDashboardPage: FC = () => {
       <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Score</Heading>
-          <ReactECharts option={getIAQGaugeOptions(80)} />
-          <div>Summary text</div>
+          <p style={{ marginBottom: theme.spacing.sm }}>Score description</p>
+          <CardContainer>
+            <ReactECharts option={getIAQGaugeOptions(80)} />
+          </CardContainer>
         </DashboardCard>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Components</Heading>
@@ -204,7 +211,10 @@ const DeviceDashboardPage: FC = () => {
           />
         </DashboardCard>
       </Flex>
-      <Box ref={containerRef}>
+      <DashboardCard
+        ref={containerRef}
+        style={{ marginBottom: theme.spacing.sm }}
+      >
         <Heading>Trend</Heading>
         <p style={{ marginBottom: theme.spacing.sm }}>
           How air quality metrics change over time
@@ -212,6 +222,7 @@ const DeviceDashboardPage: FC = () => {
 
         <SegmentGroup.Root
           value={chartTimeFilter.toString()}
+          style={{ boxShadow: theme.boxShadow.elevation }}
           onValueChange={(value) => {
             setChartTimeFilter(value.value);
           }}
@@ -242,7 +253,7 @@ const DeviceDashboardPage: FC = () => {
         </SegmentGroup.Root>
 
         {getChart()}
-      </Box>
+      </DashboardCard>
     </Container>
   );
 };

@@ -13,3 +13,10 @@ export const DashboardCard = styled(Box)`
 
   box-shadow: ${theme.boxShadow.elevation};
 `;
+
+export const CardContainer = styled.div`
+  background-color: ${theme.colors.white};
+  border-radius: ${theme.radius.medium};
+  box-shadow: ${theme.boxShadow.elevation};
+  margin-top: ${theme.spacing.sm};
+`;
