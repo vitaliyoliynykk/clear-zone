@@ -221,10 +221,12 @@ const DeviceDashboardPage: FC = () => {
         </p>
 
         <SegmentGroup.Root
-          value={chartTimeFilter.toString()}
+          value={chartTimeFilter}
           style={{ boxShadow: theme.boxShadow.elevation }}
-          onValueChange={(value) => {
-            setChartTimeFilter(value.value);
+          onValueChange={({ value }) => {
+            if (value) {
+              setChartTimeFilter(value);
+            }
           }}
           disabled={!chartType}
         >
@@ -232,7 +234,7 @@ const DeviceDashboardPage: FC = () => {
           {TIME_FILTER.map(({ value, label }, index) => (
             <SegmentGroup.Item
               key={index}
-              value={value.toString()}
+              value={value}
               style={{ cursor: 'pointer' }}
               onClick={() => {
                 if (chartType) {
