@@ -20,9 +20,11 @@ import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model
 import { WsDataModel } from '@/shared/models/ws-data-model';
 import {
   loadChart,
+  loadLatestVocIndex,
   selectChartData,
   selectChartLoadingStatus,
   selectChartType,
+  selectLatestVocIndex,
 } from '@/store/slices/device-dashboard.slice';
 import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
 import { useAppDispatch, useAppSelector } from '@/store/store';
@@ -48,6 +50,7 @@ const DeviceDashboardPage: FC = () => {
   const chartType = useAppSelector(selectChartType);
   const chartData = useAppSelector(selectChartData);
   const chartLoadingStatus = useAppSelector(selectChartLoadingStatus);
+  const vocIndex = useAppSelector(selectLatestVocIndex);
 
   const { deviceId } = useParams<{ deviceId: string }>();
   const module = useAppSelector((state) =>
@@ -72,6 +75,8 @@ const DeviceDashboardPage: FC = () => {
 
   const onWsData = (wsData: WsDataModel) => {
     if (wsData.deviceId === module?.device_id) {
+      void dispatch(loadLatestVocIndex(module._id));
+
       if (wsData.type === 'status') {
         setModuleNetworkStatus(wsData.data.status);
         setWsStatusLastUpdate(wsData.ts);
@@ -95,7 +100,7 @@ const DeviceDashboardPage: FC = () => {
     }
   };
 
-  const onWsDataMemo = useCallback(onWsData, [module]);
+  const onWsDataMemo = useCallback(onWsData, [module, dispatch]);
 
   useWebSocket(onWsDataMemo);
 
@@ -202,7 +207,15 @@ const DeviceDashboardPage: FC = () => {
           <IAQComponents
             wsMetricsLastUpdated={wsMetricsLastUpdated}
             moduleNetworkStatus={moduleNetworkStatus}
-            metrics={{ co2, hum, temp, pm25, pm10, pm100 }}
+            metrics={{
+              co2,
+              hum,
+              temp,
+              pm25,
+              pm10,
+              pm100,
+              voc: vocIndex?.index ?? null,
+            }}
             deviceId={module.device_id}
             hoursLookback={+chartTimeFilter}
             onMetricClick={() => {

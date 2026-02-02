@@ -4,4 +4,5 @@ export type SensorsTypesModel =
   | 'co2'
   | 'pm25'
   | 'pm10'
-  | 'pm100';
+  | 'pm100'
+  | 'voc';

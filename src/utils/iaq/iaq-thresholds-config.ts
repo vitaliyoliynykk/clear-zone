@@ -191,6 +191,41 @@ export const IAQ_THRESHOLDS = {
       label: 'Very poor',
     },
   ],
+  voc: [
+    {
+      max: 50,
+      color: theme.colors.green,
+      badgeColor: 'green',
+      label: 'Excellent',
+    },
+    {
+      min: 50,
+      max: 100,
+      color: theme.colors.greenLight,
+      badgeColor: 'green',
+      label: 'Good',
+    },
+    {
+      min: 100,
+      max: 150,
+      color: theme.colors.orange,
+      badgeColor: 'orange',
+      label: 'Moderate',
+    },
+    {
+      min: 150,
+      max: 250,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Poor',
+    },
+    {
+      min: 250,
+      color: theme.colors.red,
+      badgeColor: 'red',
+      label: 'Very poor',
+    },
+  ],
 } satisfies Record<SensorsTypesModel, Threshold[]>;
 const DEFAULT_IAQ: Threshold = {
   color: theme.colors.gray,

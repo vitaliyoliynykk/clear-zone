@@ -67,4 +67,14 @@ export const IAQComponentsConfig: Record<
       color: item.color,
     })),
   },
+  voc: {
+    padding: 2,
+    unit: 'Index 0-500',
+    name: 'VOC',
+    visualMap: IAQ_THRESHOLDS.voc.map((item) => ({
+      lte: item.max,
+      gt: item.min,
+      color: item.color,
+    })),
+  },
 };

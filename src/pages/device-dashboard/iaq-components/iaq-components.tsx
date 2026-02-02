@@ -27,7 +27,7 @@ export const IAQComponents: FC<{
 }) => {
   const dispatch = useAppDispatch();
 
-  const { hum, temp, co2, pm25, pm10, pm100 } = metrics;
+  const { hum, temp, co2, pm25, pm10, pm100, voc } = metrics;
 
   const co2State = resolveIAQ('co2', co2);
   const tempState = resolveIAQ('temp', temp);
@@ -35,6 +35,7 @@ export const IAQComponents: FC<{
   const pm25State = resolveIAQ('pm25', pm25);
   const pm10State = resolveIAQ('pm10', pm10);
   const pm100State = resolveIAQ('pm100', pm100);
+  const vocState = resolveIAQ('voc', voc);
 
   if (wsMetricsLastUpdated === null && moduleNetworkStatus === 'online') {
     return (
@@ -121,6 +122,19 @@ export const IAQComponents: FC<{
         onClick={() => {
           void dispatch(
             loadChart({ chartType: 'pm10', deviceId, hoursLookback })
+          );
+          onMetricClick();
+        }}
+      />
+
+      <MetricTabComponent
+        status={vocState.label}
+        metric="VOC Index"
+        value={voc !== null ? voc.toString() : '--'}
+        badgeColor={vocState.badgeColor}
+        onClick={() => {
+          void dispatch(
+            loadChart({ chartType: 'voc', deviceId, hoursLookback })
           );
           onMetricClick();
         }}
