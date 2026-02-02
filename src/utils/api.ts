@@ -20,6 +20,10 @@ const api = axios.create({
   withCredentials: true,
 });
 
+const navigateToErrorPage = (reason?: string) => {
+  window.location.replace(reason ? `/error?reason=${reason}` : '/error');
+};
+
 const logOutUser = async () => {
   try {
     await logOutRequest();
@@ -75,6 +79,8 @@ api.interceptors.response.use(
       }
     } else if (error.response?.status === 401) {
       await logOutUser();
+    } else {
+      navigateToErrorPage(error.code);
     }
 
     toaster.create({

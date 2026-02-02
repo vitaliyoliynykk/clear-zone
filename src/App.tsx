@@ -6,6 +6,7 @@ import { Navigate, Route, Routes } from 'react-router';
 
 import { Toaster } from '@/components/ui/toaster';
 
+import { ErrorPage } from './pages/error-page/error-page';
 import Layout from './shared/components/layout/layout-component';
 import ProtectedRoute from './shared/components/protected-route/protected-route';
 import { AuthProvider } from './shared/context/auth-provider';
@@ -28,6 +29,7 @@ function App() {
 
           <Route path="sign-in" element={<SignInPage />} />
           <Route path="register" element={<RegisterPage />} />
+          <Route path="error" element={<ErrorPage />} />
 
           <Route element={<ProtectedRoute />}>
             <Route path="/" element={<Layout />}>

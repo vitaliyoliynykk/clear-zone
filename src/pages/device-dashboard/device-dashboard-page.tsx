@@ -34,7 +34,7 @@ import { IAQComponents } from './iaq-components/iaq-components';
 import { CardContainer, DashboardCard } from './styled-component';
 
 const TIME_FILTER = [
-  { label: '2h', value: '8' },
+  { label: '2h', value: '2' },
   { label: '8h', value: '8' },
   { label: '24h', value: '24' },
   { label: '2d', value: '48' },
