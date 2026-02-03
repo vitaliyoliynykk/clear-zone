@@ -30,9 +30,13 @@ export const theme = {
     green: '#4caf50',
     greenDark: '#2e7d32',
 
+    yellowGreen: '#8bc34a',
+    yellow: '#ffb300',
+
     orange: '#d89f00ff',
 
     red: '#d80e00ff',
+    redOrange: '#f44336',
   },
   boxShadow: {
     elevation:

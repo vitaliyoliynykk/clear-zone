@@ -27,6 +27,10 @@ import {
   selectLatestVocIndex,
 } from '@/store/slices/device-dashboard.slice';
 import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
+import {
+  loadIaqScoresForModules,
+  selectScores,
+} from '@/store/slices/iaq-score.slice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { IAQComponentsConfig } from '@/utils/iaq/iaq-components-config';
 import { theme } from '@/utils/theme';
@@ -51,6 +55,7 @@ const DeviceDashboardPage: FC = () => {
   const chartData = useAppSelector(selectChartData);
   const chartLoadingStatus = useAppSelector(selectChartLoadingStatus);
   const vocIndex = useAppSelector(selectLatestVocIndex);
+  const scores = useAppSelector(selectScores);
 
   const { deviceId } = useParams<{ deviceId: string }>();
   const module = useAppSelector((state) =>
@@ -82,6 +87,7 @@ const DeviceDashboardPage: FC = () => {
         setWsStatusLastUpdate(wsData.ts);
       } else {
         setWsMetricsLastUpdated(wsData.ts);
+        void dispatch(loadIaqScoresForModules([module.device_id]));
       }
 
       switch (wsData.type) {
@@ -113,6 +119,8 @@ const DeviceDashboardPage: FC = () => {
           hoursLookback: 8,
         })
       );
+
+      void dispatch(loadIaqScoresForModules([module.device_id]));
     }
   }, [module, dispatch]);
 
@@ -196,7 +204,9 @@ const DeviceDashboardPage: FC = () => {
           <Heading>IAQ Score</Heading>
           <p style={{ marginBottom: theme.spacing.sm }}>Score description</p>
           <CardContainer>
-            <ReactECharts option={getIAQGaugeOptions(80)} />
+            <ReactECharts
+              option={getIAQGaugeOptions(scores[module._id]?.score ?? 0)}
+            />
           </CardContainer>
         </DashboardCard>
         <DashboardCard style={{ flex: 1 }}>

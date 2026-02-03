@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { connectModuleReducer } from './slices/connect-module.slice';
 import { deviceDashboardReducer } from './slices/device-dashboard.slice';
 import { devicesReducer } from './slices/devices';
+import { iaqScoreReducer } from './slices/iaq-score.slice';
 import { userReducer } from './slices/user-slice';
 
 const rootRedcuer = combineReducers({
@@ -11,6 +12,7 @@ const rootRedcuer = combineReducers({
   connectModule: connectModuleReducer,
   devices: devicesReducer,
   deviceDashboard: deviceDashboardReducer,
+  iaqScore: iaqScoreReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) =>

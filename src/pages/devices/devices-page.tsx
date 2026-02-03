@@ -1,5 +1,5 @@
 import { Box, Container, Spinner } from '@chakra-ui/react';
-import { FC, useCallback, useState } from 'react';
+import { FC, useCallback, useEffect, useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
 
@@ -13,6 +13,10 @@ import {
   moduleSelectors,
   selectModulesStatus,
 } from '@/store/slices/devices';
+import {
+  loadIaqScoresForModules,
+  selectScores,
+} from '@/store/slices/iaq-score.slice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 
 import { ConnectModuleDialog } from './connect-module-dialog/connect-module-dialog';
@@ -23,15 +27,22 @@ const DevicesPage: FC = () => {
   const dispatch = useAppDispatch();
   const modules = useAppSelector(moduleSelectors.selectAll);
   const status = useAppSelector(selectModulesStatus);
+  const scores = useAppSelector(selectScores);
   const isPWA = useIsPWA();
   const navigate = useNavigate();
   const [modulesStatuses, setModulesStatuses] = useState<
     Record<string, ModuleNetworkStatus | undefined>
   >({});
-  const [co2, setModulesCo2] = useState<Record<string, number>>({});
+  // const [co2, setModulesCo2] = useState<Record<string, number>>({});
   const [temp, setModulesTemp] = useState<
     Record<string, { temp: number; hum: number } | undefined>
   >({});
+
+  useEffect(() => {
+    if (modules.length) {
+      void dispatch(loadIaqScoresForModules(modules.map((m) => m.device_id)));
+    }
+  }, [modules, dispatch]);
 
   const onWsData = (wsData: WsDataModel) => {
     const module = modules.find(
@@ -47,16 +58,20 @@ const DevicesPage: FC = () => {
           }));
           break;
         case 'co2':
-          setModulesCo2((prev) => ({
-            ...prev,
-            [wsData.deviceId]: wsData.data.co2,
-          }));
+          // setModulesCo2((prev) => ({
+          //   ...prev,
+          //   [wsData.deviceId]: wsData.data.co2,
+          // }));
           break;
         case 'temp':
           setModulesTemp((prev) => ({
             ...prev,
             [wsData.deviceId]: wsData.data,
           }));
+      }
+
+      if (wsData.type !== 'status') {
+        void dispatch(loadIaqScoresForModules([module.device_id]));
       }
     }
   };
@@ -65,7 +80,7 @@ const DevicesPage: FC = () => {
     setModulesStatuses(() => ({}));
   };
 
-  const onWsDataMemo = useCallback(onWsData, [modules]);
+  const onWsDataMemo = useCallback(onWsData, [modules, dispatch]);
   const onWsClosedMemo = useCallback(onWsClosed, []);
 
   useWebSocket(onWsDataMemo, onWsClosedMemo);
@@ -86,6 +101,8 @@ const DevicesPage: FC = () => {
     );
   }
 
+  // console.log(scores[modules[0]._id].score);
+
   return (
     <Container>
       <PageHeading>My Devices</PageHeading>
@@ -95,7 +112,7 @@ const DevicesPage: FC = () => {
             key={module.device_id}
             name={module.name}
             status={modulesStatuses[module.device_id] ?? 'pending'}
-            co2={co2[module.device_id]}
+            score={scores[module._id]?.score}
             temp={temp[module.device_id]?.temp}
             hum={temp[module.device_id]?.hum}
             onClick={() => {

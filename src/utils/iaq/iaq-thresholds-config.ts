@@ -80,7 +80,7 @@ export const IAQ_THRESHOLDS = {
     },
     {
       min: 1000,
-      max: 2000,
+      max: 10000,
       color: theme.colors.red,
       badgeColor: 'red',
       label: 'Bad',
