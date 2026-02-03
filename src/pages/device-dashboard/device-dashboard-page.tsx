@@ -201,8 +201,10 @@ const DeviceDashboardPage: FC = () => {
       </Flex>
       <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
-          <Heading>IAQ Score</Heading>
-          <p style={{ marginBottom: theme.spacing.sm }}>Score description</p>
+          <Heading>IAQ Score </Heading>
+          <p style={{ marginBottom: theme.spacing.sm }}>
+            Overall air quality score
+          </p>
           <CardContainer>
             <ReactECharts
               option={getIAQGaugeOptions(scores[module._id]?.score ?? 0)}

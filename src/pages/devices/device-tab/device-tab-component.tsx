@@ -37,7 +37,7 @@ const DeviceTabComponent: FC<{
 
         <div>
           <ReactECharts
-            option={getIAQGaugeOptions(score)}
+            option={getIAQGaugeOptions(score, 9)}
             style={{ height: 170, width: 180 }}
           />
         </div>

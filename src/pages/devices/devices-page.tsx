@@ -101,8 +101,6 @@ const DevicesPage: FC = () => {
     );
   }
 
-  // console.log(scores[modules[0]._id].score);
-
   return (
     <Container>
       <PageHeading>My Devices</PageHeading>

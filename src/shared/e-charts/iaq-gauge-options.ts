@@ -1,6 +1,6 @@
 import { theme } from '@/utils/theme';
 
-export const getIAQGaugeOptions = (score: number) => ({
+export const getIAQGaugeOptions = (score: number, lineWidth = 18) => ({
   series: [
     {
       type: 'gauge',
@@ -8,7 +8,7 @@ export const getIAQGaugeOptions = (score: number) => ({
       max: 100,
       axisLine: {
         lineStyle: {
-          width: 18,
+          width: lineWidth,
           color: [
             [0.2, theme.colors.red],
             [0.4, theme.colors.redOrange],
@@ -16,11 +16,20 @@ export const getIAQGaugeOptions = (score: number) => ({
             [0.8, theme.colors.yellowGreen],
             [1, theme.colors.green],
           ],
+
+          shadowColor: 'rgba(0, 0, 0, 0.2)',
+          shadowBlur: 4,
+          shadowOffsetX: 0,
+          shadowOffsetY: 3,
         },
       },
       pointer: {
         itemStyle: {
           color: 'auto',
+          shadowColor: 'rgba(0, 0, 0, 0.2)',
+          shadowBlur: 4,
+          shadowOffsetX: 0,
+          shadowOffsetY: 3,
         },
       },
       axisTick: {
@@ -35,6 +44,7 @@ export const getIAQGaugeOptions = (score: number) => ({
         color: 'inherit',
         distance: -22,
         fontSize: 14,
+        fontWeight: 'bold',
       },
       detail: {
         valueAnimation: true,
