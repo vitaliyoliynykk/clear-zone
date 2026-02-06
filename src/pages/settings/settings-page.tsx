@@ -136,6 +136,8 @@ function SettingsPage() {
               p256dh: arrayBufferToBase64Url(p256dh),
             },
           });
+
+          await dispatch(loadPushNotificationSettings(subscription.endpoint));
         }
       }
     }
