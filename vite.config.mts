@@ -8,6 +8,9 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src/sw',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
       manifest: {
         name: 'Clear Zone - Home air quality app',

@@ -12,6 +12,7 @@ import {
 import { useForm } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 
+import { toaster } from '@/components/ui/toaster';
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
 import { selectUser, updateUser } from '@/store/slices/user-slice';
 import { useAppDispatch } from '@/store/store';
@@ -39,6 +40,18 @@ function SettingsPage() {
         reset();
       });
   });
+
+  const requestNotificationPermission = async () => {
+    const result = await Notification.requestPermission();
+
+    if (result === 'granted') {
+      toaster.create({
+        description: `Notifications permissions are granted`,
+        type: 'success',
+        duration: 3000,
+      });
+    }
+  };
 
   return (
     <Container style={{ height: '100%' }}>
@@ -88,6 +101,25 @@ function SettingsPage() {
           }}
         >
           Update
+        </Button>
+      </VStack>
+
+      <PageHeading>Notification</PageHeading>
+      <VStack
+        padding={theme.spacing.sm}
+        bg={theme.colors.lightBlue}
+        borderRadius="lg"
+        boxShadow="md"
+        alignItems="start"
+        gap={theme.spacing.sm}
+      >
+        <Button
+          colorPalette={'teal'}
+          onClick={() => {
+            void requestNotificationPermission();
+          }}
+        >
+          Request notifications permissions
         </Button>
       </VStack>
       <p style={{ textAlign: 'right', marginTop: 12 }}>
