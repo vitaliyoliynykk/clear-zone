@@ -56,7 +56,6 @@ const iaqScoreSlice = createSlice({
         loadIaqScoresForModules.fulfilled,
         (state, action: PayloadAction<IaqScoreModel[]>) => {
           state.status = 'complete';
-          console.log('payload', action.payload);
           scoreAdapter.setMany(state, action.payload);
         }
       )

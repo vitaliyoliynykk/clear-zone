@@ -12,6 +12,10 @@ export default defineConfig({
       srcDir: 'src/sw',
       filename: 'sw.ts',
       registerType: 'autoUpdate',
+      devOptions: {
+        enabled: true,
+        type: 'module',
+      },
       manifest: {
         name: 'Clear Zone - Home air quality app',
         short_name: 'Clear Zone',
