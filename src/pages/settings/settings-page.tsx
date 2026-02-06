@@ -109,36 +109,26 @@ function SettingsPage() {
       return true;
     }
 
-    toaster.create({
-      description: `Notifications permissions denied`,
-      type: 'error',
-      duration: 3000,
-    });
-
     return false;
   };
 
   const enablePushNotifications = async () => {
-    const permission = await requestNotificationPermission();
+    const subscription = pushSubscriptionRef.current;
 
-    if (permission) {
-      const subscription = pushSubscriptionRef.current;
+    if (subscription) {
+      const auth = subscription.getKey('auth');
+      const p256dh = subscription.getKey('p256dh');
 
-      if (subscription) {
-        const auth = subscription.getKey('auth');
-        const p256dh = subscription.getKey('p256dh');
+      if (auth && p256dh) {
+        await registerPushSubscriptionRequest({
+          endpoint: subscription.endpoint,
+          keys: {
+            auth: arrayBufferToBase64Url(auth),
+            p256dh: arrayBufferToBase64Url(p256dh),
+          },
+        });
 
-        if (auth && p256dh) {
-          await registerPushSubscriptionRequest({
-            endpoint: subscription.endpoint,
-            keys: {
-              auth: arrayBufferToBase64Url(auth),
-              p256dh: arrayBufferToBase64Url(p256dh),
-            },
-          });
-
-          await dispatch(loadPushNotificationSettings(subscription.endpoint));
-        }
+        void dispatch(loadPushNotificationSettings(subscription.endpoint));
       }
     }
   };
@@ -233,12 +223,21 @@ function SettingsPage() {
       >
         {getNotificationsStatus()}
 
-        <Flex gap={theme.spacing.md}>
+        <Flex gap={theme.spacing.md} wrap="wrap">
+          <Button
+            colorPalette={'teal'}
+            onClick={() => {
+              void requestNotificationPermission();
+            }}
+          >
+            Request notifications permissions
+          </Button>
+
           <Button
             colorPalette={'teal'}
             disabled={
               pushSubscriptionRef.current === null ||
-              pushNotificationSettings?.enableAlerts === false
+              pushNotificationSettings?.enableAlerts
             }
             onClick={() => {
               void enablePushNotifications();
