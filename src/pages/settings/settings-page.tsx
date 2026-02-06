@@ -236,7 +236,7 @@ function SettingsPage() {
             colorPalette={'teal'}
             disabled={
               pushSubscriptionRef.current === null ||
-              pushNotificationSettings?.enableAlerts
+              pushNotificationSettings?.enableAlerts === false
             }
             onClick={() => {
               void enablePushNotifications();
