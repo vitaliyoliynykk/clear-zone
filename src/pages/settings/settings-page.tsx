@@ -19,6 +19,7 @@ import { toaster } from '@/components/ui/toaster';
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
 import { registerPushSubscriptionRequest } from '@/shared/requests/push/register-push-subscription';
 import { testPushRequest } from '@/shared/requests/push/test-push';
+import { arrayBufferToBase64Url } from '@/shared/utils/utils';
 import {
   loadPushNotificationSettings,
   selectPushNotificationsSettings,
@@ -27,18 +28,6 @@ import { selectUser, updateUser } from '@/store/slices/user-slice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
-
-// TODO: Move to utils
-const arrayBufferToBase64Url = (buffer: ArrayBuffer) => {
-  const bytes = new Uint8Array(buffer);
-  let binary = '';
-  for (const b of bytes) binary += String.fromCharCode(b);
-
-  return btoa(binary)
-    .replace(/\+/g, '-')
-    .replace(/\//g, '_')
-    .replace(/=+$/, '');
-};
 
 function SettingsPage() {
   const dispatch = useAppDispatch();
@@ -235,10 +224,6 @@ function SettingsPage() {
 
           <Button
             colorPalette={'teal'}
-            disabled={
-              pushSubscriptionRef.current === null ||
-              pushNotificationSettings?.enableAlerts
-            }
             onClick={() => {
               void enablePushNotifications();
             }}
