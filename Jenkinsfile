@@ -8,8 +8,15 @@ pipeline {
         stage('Install Dependencies') {
             steps {
                 sh '''
-                nvm use
-                pnpm install
+          set -e
+          export NVM_DIR="$HOME/.nvm"
+          . "$NVM_DIR/nvm.sh"
+          nvm use
+
+          corepack enable
+          pnpm -v || corepack prepare pnpm@latest --activate
+
+          pnpm install --frozen-lockfile
                 '''
             }
         }
