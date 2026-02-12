@@ -15,14 +15,14 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Setup Node
-- uses: actions/setup-node@v4
-  with:
-    node-version-file: .nvmrc
-    cache: npm
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
 
-- run: corepack enable
-- run: pnpm install --frozen-lockfile
-- run: pnpm build
+      - run: corepack enable
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
 
       - name: Enable pnpm (corepack)
         run: corepack enable
