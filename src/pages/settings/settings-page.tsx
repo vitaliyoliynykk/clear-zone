@@ -27,7 +27,6 @@ import {
 import { selectUser, updateUser } from '@/store/slices/user-slice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { theme } from '@/utils/theme';
-import { formatDate } from '@/utils/time';
 
 function SettingsPage() {
   const dispatch = useAppDispatch();
@@ -141,10 +140,6 @@ function SettingsPage() {
       <>
         <p>
           Notifications: <Badge colorPalette="green">Enabled</Badge>
-        </p>
-        <p>
-          Last used:{' '}
-          {formatDate(pushNotificationSettings.lastUsedAt, 'datetime')}
         </p>
       </>
     );
