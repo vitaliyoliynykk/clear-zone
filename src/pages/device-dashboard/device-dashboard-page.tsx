@@ -36,6 +36,7 @@ import { IAQComponentsConfig } from '@/utils/iaq/iaq-components-config';
 import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
 
+import { AISummary } from './ai-summary/ai-summary';
 import { IAQComponents } from './iaq-components/iaq-components';
 import { CardContainer, DashboardCard } from './styled-component';
 
@@ -209,6 +210,10 @@ const DeviceDashboardPage: FC = () => {
             <ReactECharts
               option={getIAQGaugeOptions(scores[module._id]?.score ?? 0)}
             />
+          </CardContainer>
+
+          <CardContainer>
+            <AISummary />
           </CardContainer>
         </DashboardCard>
         <DashboardCard style={{ flex: 1 }}>
