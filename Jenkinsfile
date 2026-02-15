@@ -8,11 +8,15 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        checkout([$class: 'GitSCM', branches: [[name: '*/test']], userRemoteConfigs: scm.userRemoteConfigs])
+        checkout([
+          $class: 'GitSCM',
+          branches: [[name: '*/test']],
+          userRemoteConfigs: scm.userRemoteConfigs
+        ])
       }
     }
 
-        stage('SonarQube analysis') {
+    stage('SonarQube analysis') {
       steps {
         script { // Індикація того що подальший блок коду буде використовувати scripted pipeline
           def scannerHome = tool 'SonarQube Scanner' // в оголошену змінну запишеться шлях до
@@ -23,9 +27,8 @@ pipeline {
           // папки проекту, та запускаємо утиліту сканер
           }
         }
-        7
       }
-        }
+    }
 
     stage('Install') {
       steps {
