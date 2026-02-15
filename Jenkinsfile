@@ -8,7 +8,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        checkout([$class: 'GitSCM', branches: [[name: '*/main']], userRemoteConfigs: scm.userRemoteConfigs])
+        checkout([$class: 'GitSCM', branches: [[name: '*/test']], userRemoteConfigs: scm.userRemoteConfigs])
       }
     }
 
