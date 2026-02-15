@@ -12,6 +12,21 @@ pipeline {
       }
     }
 
+        stage('SonarQube analysis') {
+      steps {
+        script { // Індикація того що подальший блок коду буде використовувати scripted pipeline
+          def scannerHome = tool 'SonarQube Scanner' // в оголошену змінну запишеться шлях до
+          // утиліти sonar - scanner, який унаслідується з Global Tool Configuration
+          withSonarQubeEnv('SonarQube') { // Вказуємо який SonarQube Server використовувати,
+            //  назва повинна бути така ж як і в Configure System
+            sh "${scannerHome}/bin/sonar-scanner" // Переходимо у корінь
+          // папки проекту, та запускаємо утиліту сканер
+          }
+        }
+        7
+      }
+        }
+
     stage('Install') {
       steps {
         sh '''
