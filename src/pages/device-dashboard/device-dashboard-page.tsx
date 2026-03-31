@@ -11,6 +11,7 @@ import ReactECharts from 'echarts-for-react';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'react-router';
 
+import { Tooltip } from '@/components/ui/tooltip';
 import NetworkStatusDot from '@/shared/components/network-status-dot/network-status-dot';
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
 import { getIAQGaugeOptions } from '@/shared/e-charts/iaq-gauge-options';
@@ -36,7 +37,6 @@ import { IAQComponentsConfig } from '@/utils/iaq/iaq-components-config';
 import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
 
-import { AISummary } from './ai-summary/ai-summary';
 import { IAQComponents } from './iaq-components/iaq-components';
 import { CardContainer, DashboardCard } from './styled-component';
 
@@ -198,7 +198,11 @@ const DeviceDashboardPage: FC = () => {
           <NetworkStatusDot status={moduleNetworkStatus} />
           {moduleNetworkStatus}
         </Badge>
-        Updated: {getLastUpdatedTime()}
+        <Tooltip
+          content={`Uptime: ${String(Math.floor(vocIndex?.uptimeSeconds ? vocIndex.uptimeSeconds / 60 : 0))} minutes`}
+        >
+          <p style={{ cursor: 'pointer' }}> Updated: {getLastUpdatedTime()}</p>
+        </Tooltip>
       </Flex>
       <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
@@ -212,9 +216,7 @@ const DeviceDashboardPage: FC = () => {
             />
           </CardContainer>
 
-          <CardContainer>
-            <AISummary />
-          </CardContainer>
+          <CardContainer>{/* <AISummary /> */}</CardContainer>
         </DashboardCard>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Components</Heading>
@@ -233,6 +235,7 @@ const DeviceDashboardPage: FC = () => {
               pm100,
               voc: vocIndex?.index ?? null,
             }}
+            sensorsState={{ voc: vocIndex?.state ?? 'offline' }}
             deviceId={module.device_id}
             hoursLookback={+chartTimeFilter}
             onMetricClick={() => {

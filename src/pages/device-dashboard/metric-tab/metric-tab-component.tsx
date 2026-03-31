@@ -8,13 +8,15 @@ const MetricTabComponent: FC<{
   value: string;
   badgeColor: string;
   status: string;
+  state?: string | null;
   onClick?: () => void;
-}> = ({ metric, value, badgeColor, status, onClick }) => {
+}> = ({ metric, value, badgeColor, status, onClick, state }) => {
   return (
     <TabContainer onClick={onClick}>
       <p style={{ fontWeight: 'bold' }}>{metric}</p>
       <p>
-        {value} <Badge colorPalette={badgeColor}>{status}</Badge>
+        {value} <Badge colorPalette={badgeColor}>{status}</Badge>{' '}
+        {state ? <Badge colorPalette="teal">{state}</Badge> : null}
       </p>
     </TabContainer>
   );

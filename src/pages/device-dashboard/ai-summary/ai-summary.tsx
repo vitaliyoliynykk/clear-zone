@@ -9,7 +9,7 @@ export const AISummary: FC = () => {
   return (
     <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
       <Button colorPalette="teal" mb={theme.spacing.xs}>
-        Explain air quality with AI ✨
+        Analyze with AI ✨
       </Button>
       <p style={{ textAlign: 'center' }}>
         Explains how metrics contribute to your air quality using aggregated

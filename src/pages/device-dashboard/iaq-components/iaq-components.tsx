@@ -16,6 +16,7 @@ export const IAQComponents: FC<{
   metrics: Record<SensorsTypesModel, number | null>;
   deviceId: string;
   hoursLookback: number;
+  sensorsState?: Partial<Record<SensorsTypesModel, string | null>>;
   onMetricClick: () => void;
 }> = ({
   wsMetricsLastUpdated,
@@ -23,6 +24,7 @@ export const IAQComponents: FC<{
   deviceId,
   hoursLookback,
   moduleNetworkStatus,
+  sensorsState,
   onMetricClick,
 }) => {
   const dispatch = useAppDispatch();
@@ -132,6 +134,7 @@ export const IAQComponents: FC<{
         metric="VOC Index"
         value={voc !== null ? voc.toString() : '--'}
         badgeColor={vocState.badgeColor}
+        state={sensorsState?.voc}
         onClick={() => {
           void dispatch(
             loadChart({ chartType: 'voc', deviceId, hoursLookback })
