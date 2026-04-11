@@ -12,7 +12,7 @@ export const formatDate = (
   format: 'datetime' | 'time' = 'datetime'
 ) => {
   if (format === 'datetime') {
-    new Intl.DateTimeFormat('uk-UA', {
+    return new Intl.DateTimeFormat('uk-UA', {
       dateStyle: 'short',
       timeStyle: 'short',
     }).format(new Date(iso));
