@@ -1,6 +1,7 @@
 import {
   Badge,
   Box,
+  Button,
   Container,
   Flex,
   Heading,
@@ -9,7 +10,8 @@ import {
 } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router';
+import { GoArrowLeft } from 'react-icons/go';
+import { useNavigate, useParams } from 'react-router';
 
 import { Tooltip } from '@/components/ui/tooltip';
 import NetworkStatusDot from '@/shared/components/network-status-dot/network-status-dot';
@@ -78,6 +80,8 @@ const DeviceDashboardPage: FC = () => {
   const [pm10, setPm10] = useState<number | null>(null);
   const [pm100, setPm100] = useState<number | null>(null);
   const [chartTimeFilter, setChartTimeFilter] = useState('24');
+
+  const navigate = useNavigate();
 
   const onWsData = (wsData: WsDataModel) => {
     if (wsData.deviceId === module?.device_id) {
@@ -189,20 +193,42 @@ const DeviceDashboardPage: FC = () => {
 
   return (
     <Container>
-      <PageHeading>Air Quality Overview - {module.name}</PageHeading>
-      <Flex style={{ marginBottom: theme.spacing.sm }}>
-        <Badge
-          style={{ marginRight: theme.spacing.xs }}
-          colorPalette={moduleNetworkStatus === 'online' ? 'green' : 'red'}
+      <Flex justifyContent="flex-end">
+        <PageHeading>Air Quality Overview - {module.name}</PageHeading>
+      </Flex>
+
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        style={{ marginBottom: theme.spacing.sm }}
+      >
+        <Button
+          variant="outline"
+          color="black"
+          onClick={() => {
+            void navigate('..');
+          }}
         >
-          <NetworkStatusDot status={moduleNetworkStatus} />
-          {moduleNetworkStatus}
-        </Badge>
-        <Tooltip
-          content={`Uptime: ${String(Math.floor(vocIndex?.uptimeSeconds ? vocIndex.uptimeSeconds / 60 : 0))} minutes`}
-        >
-          <p style={{ cursor: 'pointer' }}> Updated: {getLastUpdatedTime()}</p>
-        </Tooltip>
+          <GoArrowLeft />
+          Back
+        </Button>
+        <Flex>
+          <Badge
+            style={{ marginRight: theme.spacing.xs }}
+            colorPalette={moduleNetworkStatus === 'online' ? 'green' : 'red'}
+          >
+            <NetworkStatusDot status={moduleNetworkStatus} />
+            {moduleNetworkStatus}
+          </Badge>
+          <Tooltip
+            content={`Uptime: ${String(Math.floor(vocIndex?.uptimeSeconds ? vocIndex.uptimeSeconds / 60 : 0))} minutes`}
+          >
+            <p style={{ cursor: 'pointer' }}>
+              {' '}
+              Updated: {getLastUpdatedTime()}
+            </p>
+          </Tooltip>
+        </Flex>
       </Flex>
       <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
