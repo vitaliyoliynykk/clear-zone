@@ -25,14 +25,14 @@ export default defineConfig({
         display: 'standalone',
         icons: [
           {
-            src: '/clear-zone.svg',
+            src: '/LOGO_192.png',
             sizes: '192x192',
-            type: 'image/svg',
+            type: 'image/png',
           },
           {
-            src: '/clear-zone.svg',
+            src: '/LOGO_512.png',
             sizes: '512x512',
-            type: 'image/svg',
+            type: 'image/png',
           },
         ],
       },

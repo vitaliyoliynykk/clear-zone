@@ -43,11 +43,11 @@ import { IAQComponents } from './iaq-components/iaq-components';
 import { CardContainer, DashboardCard } from './styled-component';
 
 const TIME_FILTER = [
-  { label: '2h', value: '2' },
-  { label: '8h', value: '8' },
-  { label: '24h', value: '24' },
-  { label: '2d', value: '48' },
-  { label: '1w', value: '168' },
+  { label: '2h.', value: '2' },
+  { label: '12h.', value: '12' },
+  { label: 'day', value: '24' },
+  { label: '2 days', value: '48' },
+  { label: 'week', value: '168' },
 ];
 
 const DeviceDashboardPage: FC = () => {
