@@ -33,7 +33,6 @@ const DevicesPage: FC = () => {
   const [modulesStatuses, setModulesStatuses] = useState<
     Record<string, ModuleNetworkStatus | undefined>
   >({});
-  // const [co2, setModulesCo2] = useState<Record<string, number>>({});
   const [temp, setModulesTemp] = useState<
     Record<string, { temp: number; hum: number } | undefined>
   >({});
@@ -56,12 +55,6 @@ const DevicesPage: FC = () => {
             ...prev,
             [wsData.deviceId]: wsData.data.status,
           }));
-          break;
-        case 'co2':
-          // setModulesCo2((prev) => ({
-          //   ...prev,
-          //   [wsData.deviceId]: wsData.data.co2,
-          // }));
           break;
         case 'temp':
           setModulesTemp((prev) => ({

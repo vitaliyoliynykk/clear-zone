@@ -39,6 +39,7 @@ import { IAQComponentsConfig } from '@/utils/iaq/iaq-components-config';
 import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
 
+import { AISummary } from './ai-summary/ai-summary';
 import { IAQComponents } from './iaq-components/iaq-components';
 import { CardContainer, DashboardCard } from './styled-component';
 
@@ -232,7 +233,7 @@ const DeviceDashboardPage: FC = () => {
       </Flex>
       <Flex wrap="wrap" gap={4} style={{ marginBottom: theme.spacing.sm }}>
         <DashboardCard style={{ flex: 1 }}>
-          <Heading>IAQ Score </Heading>
+          <Heading>IAQ Score</Heading>
           <p style={{ marginBottom: theme.spacing.sm }}>
             Overall air quality score
           </p>
@@ -242,7 +243,13 @@ const DeviceDashboardPage: FC = () => {
             />
           </CardContainer>
 
-          <CardContainer>{/* <AISummary /> */}</CardContainer>
+          <Heading paddingTop={theme.spacing.md}>AI Analysis</Heading>
+          <p style={{ marginBottom: theme.spacing.sm }}>
+            AI-powered aiq quality insights
+          </p>
+          <CardContainer>
+            <AISummary deviceId={module.device_id} />
+          </CardContainer>
         </DashboardCard>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Components</Heading>
