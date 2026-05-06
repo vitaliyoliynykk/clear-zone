@@ -102,7 +102,7 @@ const RegisterPage: FC = () => {
           </Button>
         </VStack>
 
-        <Text mt={4} color="blue.500">
+        <Text mt={4} color="blue.700">
           <Link to="/sign-in">Already have an account? Sign In</Link>
         </Text>
       </Box>

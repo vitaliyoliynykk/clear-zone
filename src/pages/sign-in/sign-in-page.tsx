@@ -60,7 +60,7 @@ const SignInPage: FC = () => {
       bg={theme.colors.lightBlue}
     >
       <Box
-        bg={theme.colors.white}
+        bg={theme.colors.grayLight}
         p={6}
         m="0 1.5rem"
         borderRadius="lg"
@@ -125,7 +125,7 @@ const SignInPage: FC = () => {
           </Alert.Root>
         )}
 
-        <Text mt={4} color="blue.500">
+        <Text mt={4} color="blue.700">
           <Link to="/register">Don&apos;t have an account? Register</Link>
         </Text>
       </Box>

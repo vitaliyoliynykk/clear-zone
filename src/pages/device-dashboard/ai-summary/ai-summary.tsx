@@ -45,6 +45,7 @@ export const AISummary: FC<{ deviceId: string }> = ({ deviceId }) => {
       <Container style={{ justifyContent: 'center', alignItems: 'center' }}>
         <Button
           colorPalette="teal"
+          boxShadow={theme.boxShadow.elevation}
           mb={theme.spacing.xs}
           onClick={() => {
             void getAiSummary();
