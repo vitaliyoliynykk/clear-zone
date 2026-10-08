@@ -5,12 +5,13 @@ import {
   Container,
   Flex,
   Heading,
+  IconButton,
   SegmentGroup,
   Spinner,
 } from '@chakra-ui/react';
 import ReactECharts from 'echarts-for-react';
 import { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { GoArrowLeft } from 'react-icons/go';
+import { GoArrowLeft, GoGear } from 'react-icons/go';
 import { useNavigate, useParams } from 'react-router';
 
 import { Tooltip } from '@/components/ui/tooltip';
@@ -203,16 +204,33 @@ const DeviceDashboardPage: FC = () => {
         alignItems="center"
         style={{ marginBottom: theme.spacing.sm }}
       >
-        <Button
-          variant="outline"
-          color="black"
-          onClick={() => {
-            void navigate('..');
-          }}
-        >
-          <GoArrowLeft />
-          Back
-        </Button>
+        <Flex gap={2}>
+          <Button
+            variant="outline"
+            size="sm"
+            colorPalette="gray"
+            onClick={() => {
+              void navigate('..');
+            }}
+          >
+            <GoArrowLeft />
+            Back
+          </Button>
+          <IconButton
+            aria-label="Device settings"
+            title="Device settings"
+            variant="outline"
+            size="sm"
+            colorPalette="gray"
+            onClick={() => {
+              void navigate(
+                `/device-settings/${encodeURIComponent(module.device_id)}`
+              );
+            }}
+          >
+            <GoGear />
+          </IconButton>
+        </Flex>
         <Flex>
           <Badge
             style={{ marginRight: theme.spacing.xs }}

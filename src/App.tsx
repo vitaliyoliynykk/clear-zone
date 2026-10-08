@@ -12,6 +12,9 @@ import ProtectedRoute from './shared/components/protected-route/protected-route'
 import { AuthProvider } from './shared/context/auth-provider';
 
 const SettingsPage = lazy(() => import('./pages/settings/settings-page'));
+const DeviceSettingsPage = lazy(
+  () => import('./pages/device-settings/device-settings-page')
+);
 const SignInPage = lazy(() => import('./pages/sign-in/sign-in-page'));
 const RegisterPage = lazy(() => import('./pages/register/register-page'));
 const DashboardPage = lazy(() => import('./pages/dashboard/dashboard-page'));
@@ -40,6 +43,10 @@ function App() {
                 element={<DeviceDashboardPage />}
               />
               <Route path="settings" element={<SettingsPage />} />
+              <Route
+                path="device-settings/:deviceId"
+                element={<DeviceSettingsPage />}
+              />
             </Route>
           </Route>
         </Routes>
