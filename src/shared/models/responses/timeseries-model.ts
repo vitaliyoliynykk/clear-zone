@@ -1,4 +1,4 @@
 export interface TimeseriesItemModel {
   date: number;
-  value: number;
+  value: number | null;
 }

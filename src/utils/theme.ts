@@ -25,6 +25,7 @@ export const theme = {
     grayLight: '#f2f4f7',
     gray: '#c3c4c5',
     grayDark: '#6e7a87',
+    grayTransparent: '#6e7a8733',
 
     greenLightest: '#e6f4ea',
     greenLight: '#8da300ff',
