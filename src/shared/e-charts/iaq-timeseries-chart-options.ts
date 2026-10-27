@@ -25,6 +25,14 @@ export const getIAQTimeseriosOptions = (
     tooltip: {
       trigger: 'axis',
     },
+    legend: {
+      data: [
+        {
+          name: 'Missing data',
+          icon: 'rect',
+        },
+      ],
+    },
     xAxis: {
       type: 'category',
       data: dates,
