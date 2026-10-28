@@ -51,6 +51,7 @@ const TIME_FILTER = [
   { label: '2 days', value: '48' },
   { label: 'week', value: '168' },
 ];
+const DEFAULT_CHART_TIME_FILTER = '24';
 
 const DeviceDashboardPage: FC = () => {
   const dispatch = useAppDispatch();
@@ -81,7 +82,9 @@ const DeviceDashboardPage: FC = () => {
   const [pm25, setPm25] = useState<number | null>(null);
   const [pm10, setPm10] = useState<number | null>(null);
   const [pm100, setPm100] = useState<number | null>(null);
-  const [chartTimeFilter, setChartTimeFilter] = useState('24');
+  const [chartTimeFilter, setChartTimeFilter] = useState(
+    DEFAULT_CHART_TIME_FILTER
+  );
 
   const navigate = useNavigate();
 
@@ -123,13 +126,48 @@ const DeviceDashboardPage: FC = () => {
         loadChart({
           chartType: 'co2',
           deviceId: module.device_id,
-          hoursLookback: 8,
+          hoursLookback: Number(DEFAULT_CHART_TIME_FILTER),
         })
       );
 
+      void dispatch(loadLatestVocIndex(module._id));
       void dispatch(loadIaqScoresForModules([module.device_id]));
     }
   }, [module, dispatch]);
+
+  const refreshDashboard = useCallback(() => {
+    if (!module) {
+      return;
+    }
+
+    void dispatch(
+      loadChart({
+        chartType: chartType ?? 'co2',
+        deviceId: module.device_id,
+        hoursLookback: Number(chartTimeFilter),
+      })
+    );
+    void dispatch(loadLatestVocIndex(module._id));
+    void dispatch(loadIaqScoresForModules([module.device_id]));
+  }, [chartTimeFilter, chartType, dispatch, module]);
+
+  useEffect(() => {
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') {
+        refreshDashboard();
+      }
+    };
+
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+    window.addEventListener('pageshow', refreshWhenVisible);
+    window.addEventListener('online', refreshWhenVisible);
+
+    return () => {
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+      window.removeEventListener('pageshow', refreshWhenVisible);
+      window.removeEventListener('online', refreshWhenVisible);
+    };
+  }, [refreshDashboard]);
 
   const getChart = () => {
     if (chartLoadingStatus === 'loading') {
