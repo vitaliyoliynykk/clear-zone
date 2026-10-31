@@ -1,10 +1,11 @@
 import './App.css';
 
-import { Spinner } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
 import { lazy, Suspense } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
 import { Toaster } from '@/components/ui/toaster';
+import { Logo } from '@/shared/components/logo/Logo';
 
 import { ErrorPage } from './pages/error-page/error-page';
 import Layout from './shared/components/layout/layout-component';
@@ -26,7 +27,21 @@ const DevicesPage = lazy(() => import('./pages/devices/devices-page'));
 function App() {
   return (
     <AuthProvider>
-      <Suspense fallback={<Spinner />}>
+      <Suspense
+        fallback={
+          <Flex
+            role="status"
+            aria-live="polite"
+            direction="column"
+            align="center"
+            justify="center"
+            minHeight="100vh"
+            className="app-loading-logo"
+          >
+            <Logo />
+          </Flex>
+        }
+      >
         <Routes>
           <Route path="*" element={<Navigate to="/" replace />} />
 

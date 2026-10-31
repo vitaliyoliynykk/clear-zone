@@ -21,7 +21,6 @@ import {
 
 const _navigation = [
   { link: '/', name: 'Devices' },
-  { link: '/dashboard', name: 'Dashboard' },
   { link: '/settings', name: 'Settings', isProtected: true },
 ];
 

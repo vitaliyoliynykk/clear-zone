@@ -2,3 +2,18 @@
   height: 100vh;
   width: 100%;
 }
+
+@keyframes app-logo-zoom {
+  0%,
+  100% {
+    transform: scale(0.9);
+  }
+  50% {
+    transform: scale(1.1);
+  }
+}
+
+.app-loading-logo img {
+  animation: app-logo-zoom 1.5s ease-in-out infinite;
+  transform-origin: center;
+}
