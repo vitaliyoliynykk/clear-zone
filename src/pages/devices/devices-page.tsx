@@ -1,4 +1,4 @@
-import { Box, Container, Spinner } from '@chakra-ui/react';
+import { Box, Container, Skeleton } from '@chakra-ui/react';
 import { FC, useCallback, useEffect, useState } from 'react';
 import { IoAdd } from 'react-icons/io5';
 import { useNavigate } from 'react-router';
@@ -80,15 +80,19 @@ const DevicesPage: FC = () => {
 
   if (status === 'loading') {
     return (
-      <Container style={{ height: '100%' }}>
+      <Container>
         <PageHeading>My Devices</PageHeading>
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          style={{ height: '100%' }}
-        >
-          <Spinner />
+        <Box display="flex" style={{ gap: '12px', flexWrap: 'wrap' }}>
+          {Array.from({ length: 3 }, (_, index) => (
+            <Skeleton
+              key={index}
+              aria-label="Loading device card"
+              width={{ base: '100%', md: '265px' }}
+              height="265px"
+              borderRadius="md"
+              flexShrink={0}
+            />
+          ))}
         </Box>
       </Container>
     );

@@ -23,11 +23,14 @@ import { useWebSocket } from '@/shared/hooks/useWebSocket';
 import { ModuleNetworkStatus } from '@/shared/models/module-network-status-model';
 import { WsDataModel } from '@/shared/models/ws-data-model';
 import {
+  clearForecast,
   loadChart,
+  loadForecast,
   loadLatestVocIndex,
   selectChartData,
   selectChartLoadingStatus,
   selectChartType,
+  selectForecast,
   selectLatestVocIndex,
 } from '@/store/slices/device-dashboard.slice';
 import { moduleSelectors, selectModulesStatus } from '@/store/slices/devices';
@@ -35,12 +38,12 @@ import {
   loadIaqScoresForModules,
   selectScores,
 } from '@/store/slices/iaq-score.slice';
+import { selectSelectedModel } from '@/store/slices/models.slice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { IAQComponentsConfig } from '@/utils/iaq/iaq-components-config';
 import { theme } from '@/utils/theme';
 import { formatDate } from '@/utils/time';
 
-import { AISummary } from './ai-summary/ai-summary';
 import { IAQComponents } from './iaq-components/iaq-components';
 import { CardContainer, DashboardCard } from './styled-component';
 
@@ -60,8 +63,10 @@ const DeviceDashboardPage: FC = () => {
   const chartType = useAppSelector(selectChartType);
   const chartData = useAppSelector(selectChartData);
   const chartLoadingStatus = useAppSelector(selectChartLoadingStatus);
+  const forecast = useAppSelector(selectForecast);
   const vocIndex = useAppSelector(selectLatestVocIndex);
   const scores = useAppSelector(selectScores);
+  const selectedModel = useAppSelector(selectSelectedModel);
 
   const { deviceId } = useParams<{ deviceId: string }>();
   const module = useAppSelector((state) =>
@@ -135,6 +140,19 @@ const DeviceDashboardPage: FC = () => {
     }
   }, [module, dispatch]);
 
+  useEffect(() => {
+    if (!module) {
+      return;
+    }
+    if (chartType === 'co2' && selectedModel) {
+      void dispatch(
+        loadForecast({ deviceId: module.device_id, model: selectedModel })
+      );
+    } else {
+      dispatch(clearForecast());
+    }
+  }, [chartType, module, selectedModel, dispatch]);
+
   const refreshDashboard = useCallback(() => {
     if (!module) {
       return;
@@ -147,9 +165,18 @@ const DeviceDashboardPage: FC = () => {
         hoursLookback: Number(chartTimeFilter),
       })
     );
+
+    if (chartType === 'co2' && selectedModel) {
+      void dispatch(
+        loadForecast({ deviceId: module.device_id, model: selectedModel })
+      );
+    } else {
+      dispatch(clearForecast());
+    }
+
     void dispatch(loadLatestVocIndex(module._id));
     void dispatch(loadIaqScoresForModules([module.device_id]));
-  }, [chartTimeFilter, chartType, dispatch, module]);
+  }, [chartTimeFilter, chartType, dispatch, module, selectedModel]);
 
   useEffect(() => {
     const refreshWhenVisible = () => {
@@ -189,7 +216,9 @@ const DeviceDashboardPage: FC = () => {
           style={{ flex: 1 }}
           option={getIAQTimeseriosOptions(
             chartData,
-            IAQComponentsConfig[chartType]
+            IAQComponentsConfig[chartType],
+            forecast.data,
+            forecast.fetchedAt
           )}
         />
       </CardContainer>
@@ -299,13 +328,13 @@ const DeviceDashboardPage: FC = () => {
             />
           </CardContainer>
 
-          <Heading paddingTop={theme.spacing.md}>AI Analysis</Heading>
+          {/* <Heading paddingTop={theme.spacing.md}>AI Analysis</Heading>
           <p style={{ marginBottom: theme.spacing.sm }}>
             AI-powered aiq quality insights
           </p>
           <CardContainer>
             <AISummary deviceId={module.device_id} />
-          </CardContainer>
+          </CardContainer> */}
         </DashboardCard>
         <DashboardCard style={{ flex: 1 }}>
           <Heading>IAQ Components</Heading>
@@ -348,6 +377,15 @@ const DeviceDashboardPage: FC = () => {
           onValueChange={({ value }) => {
             if (value) {
               setChartTimeFilter(value);
+              if (chartType) {
+                void dispatch(
+                  loadChart({
+                    chartType,
+                    deviceId: module.device_id,
+                    hoursLookback: Number(value),
+                  })
+                );
+              }
             }
           }}
           disabled={!chartType}
@@ -358,17 +396,6 @@ const DeviceDashboardPage: FC = () => {
               key={index}
               value={value}
               style={{ cursor: 'pointer' }}
-              onClick={() => {
-                if (chartType) {
-                  void dispatch(
-                    loadChart({
-                      chartType,
-                      deviceId: module.device_id,
-                      hoursLookback: Number(value),
-                    })
-                  );
-                }
-              }}
             >
               <SegmentGroup.ItemText>{label}</SegmentGroup.ItemText>
               <SegmentGroup.ItemHiddenInput />

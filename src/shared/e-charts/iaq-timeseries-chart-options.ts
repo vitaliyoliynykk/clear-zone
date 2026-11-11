@@ -1,21 +1,38 @@
 import { theme } from '@/utils/theme';
-import { formatDate } from '@/utils/time';
 
 import { IAQComponentConfigModel } from '../models/iaq/iaq-component-config-model';
+import { ForecastResponseModel } from '../models/responses/forecast-response-model';
 import { TimeseriesItemModel } from '../models/responses/timeseries-model';
+
+type MissingDataArea = [{ xAxis: Date }, { xAxis: Date }];
 
 export const getIAQTimeseriosOptions = (
   data: TimeseriesItemModel[],
-  config: IAQComponentConfigModel
+  config: IAQComponentConfigModel,
+  forecast: ForecastResponseModel = [],
+  forecastFetchedAt: number | null = null
 ): unknown => {
-  const values = data.map(({ value }) => value);
-  const dates = data.map(({ date }) => formatDate(date));
-  const numericValues = values.filter(
-    (value): value is number => value !== null
-  );
+  const values = data.map(({ date, value }) => [new Date(date), value]);
+
+  const numericValues = data
+    .map(({ value }) => value)
+    .filter((value): value is number => value !== null);
+
+  // TODO: Move forecast logic out of this method. It should care only about timeseries
+  let forecastValues: (number | Date | null)[][] = [];
+
+  if (forecast.length && forecastFetchedAt) {
+    forecastValues = [
+      values[values.length - 1],
+      ...forecast.map(({ horizonMinutes, value }) => [
+        new Date(forecastFetchedAt + horizonMinutes * 60_000),
+        value,
+      ]),
+    ];
+  }
 
   const minValue = numericValues.length ? Math.min(...numericValues) : 0;
-  const missingDataAreas = getMissingDataAreas(data, dates);
+  const missingDataAreas = getMissingDataAreas(data);
 
   return {
     mode: 'dark',
@@ -31,11 +48,13 @@ export const getIAQTimeseriosOptions = (
           name: 'Missing data',
           icon: 'rect',
         },
+        {
+          name: `${config.name} - forecast`,
+        },
       ],
     },
     xAxis: {
-      type: 'category',
-      data: dates,
+      type: 'time',
     },
     yAxis: {
       type: 'value',
@@ -45,11 +64,13 @@ export const getIAQTimeseriosOptions = (
       },
     },
     visualMap: {
+      seriesIndex: 0,
       show: false,
       pieces: config.visualMap,
     },
     series: [
       {
+        name: `${config.name} - historical`,
         data: values,
         type: 'line',
         smooth: true,
@@ -71,17 +92,29 @@ export const getIAQTimeseriosOptions = (
           data: missingDataAreas,
         },
       },
+      {
+        name: `${config.name} - forecast`,
+        type: 'line',
+        smooth: true,
+        data: forecastValues,
+        color: theme.colors.darkBlue,
+        symbolSize: 4,
+        lineStyle: {
+          opacity: 0.7,
+          width: 4,
+        },
+      },
     ],
   };
 };
 
-const getMissingDataAreas = (data: TimeseriesItemModel[], dates: string[]) => {
-  const missingDataAreas: [{ xAxis: string }, { xAxis: string }][] = [];
+const getMissingDataAreas = (
+  data: TimeseriesItemModel[]
+): MissingDataArea[] => {
+  const areas: MissingDataArea[] = [];
 
   for (let index = 0; index < data.length; index += 1) {
-    if (data[index].value !== null) {
-      continue;
-    }
+    if (data[index].value !== null) continue;
 
     const gapStart = index;
 
@@ -89,11 +122,14 @@ const getMissingDataAreas = (data: TimeseriesItemModel[], dates: string[]) => {
       index += 1;
     }
 
-    missingDataAreas.push([
-      { xAxis: dates[Math.max(0, gapStart - 1)] },
-      { xAxis: dates[Math.min(data.length - 1, index + 1)] },
+    const beforeIndex = Math.max(0, gapStart - 1);
+    const afterIndex = Math.min(data.length - 1, index + 1);
+
+    areas.push([
+      { xAxis: new Date(data[beforeIndex].date) },
+      { xAxis: new Date(data[afterIndex].date) },
     ]);
   }
 
-  return missingDataAreas;
+  return areas;
 };

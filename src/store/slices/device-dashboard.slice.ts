@@ -6,9 +6,11 @@ import {
 } from '@reduxjs/toolkit';
 
 import { LoadingStatus } from '@/shared/models/loading-status-model';
+import { ForecastResponseModel } from '@/shared/models/responses/forecast-response-model';
 import { TimeseriesItemModel } from '@/shared/models/responses/timeseries-model';
 import { VocIndexModel } from '@/shared/models/responses/voc-index-model';
 import { SensorsTypesModel } from '@/shared/models/sensors-types-model';
+import { getForecastRequest } from '@/shared/requests/ai/getForecast';
 import { getLatestVocIndex } from '@/shared/requests/sensors/getLatestVocIndex';
 import { getSensorAgrregatedTimeseriesRequest } from '@/shared/requests/sensors/getSensorAgrregatedTimeseries';
 import { getVocAgrregatedTimeseriesRequest } from '@/shared/requests/sensors/getVocAgrregatedTimeseries';
@@ -20,6 +22,9 @@ interface DeviceDashboardState {
   chartData: TimeseriesItemModel[];
   chartLoadingStatus: LoadingStatus;
   vocIndex: VocIndexModel | null;
+  //TODO: Move forecasts to separate slice
+  forecast: ForecastResponseModel;
+  forecastFetchedAt: number | null;
 }
 
 const initialState: DeviceDashboardState = {
@@ -27,6 +32,8 @@ const initialState: DeviceDashboardState = {
   chartData: [],
   chartLoadingStatus: 'empty',
   vocIndex: null,
+  forecast: [],
+  forecastFetchedAt: null,
 };
 
 const selectDeviceDashboardState = (state: RootState) => state.deviceDashboard;
@@ -46,6 +53,10 @@ const selectLatestVocIndex = createSelector(
   selectDeviceDashboardState,
   (state) => state.vocIndex
 );
+const selectForecast = createSelector(selectDeviceDashboardState, (state) => ({
+  data: state.forecast,
+  fetchedAt: state.forecastFetchedAt,
+}));
 
 export const loadChart = createAsyncThunk<
   TimeseriesItemModel[],
@@ -68,10 +79,23 @@ export const loadLatestVocIndex = createAsyncThunk<VocIndexModel, string>(
   (moduleId) => getLatestVocIndex(moduleId)
 );
 
+export const loadForecast = createAsyncThunk<
+  { forecast: ForecastResponseModel; fetchedAt: number },
+  { deviceId: string; model: string }
+>('device-dashboard/load-forecast', async ({ deviceId, model }) => ({
+  forecast: await getForecastRequest(deviceId, model),
+  fetchedAt: Date.now(),
+}));
+
 export const deviceDashboardSlice = createSlice({
   name: 'device-dashboard',
   initialState,
-  reducers: {},
+  reducers: {
+    clearForecast: (state) => {
+      state.forecast = [];
+      state.forecastFetchedAt = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loadChart.pending, (state, action) => {
@@ -98,15 +122,22 @@ export const deviceDashboardSlice = createSlice({
         state.vocIndex = action.payload;
       }
     );
+    builder.addCase(loadForecast.fulfilled, (state, action) => {
+      state.forecast = action.payload.forecast;
+      state.forecastFetchedAt = action.payload.fetchedAt;
+    });
   },
 });
 
 const deviceDashboardReducer = deviceDashboardSlice.reducer;
+const { clearForecast } = deviceDashboardSlice.actions;
 
 export {
+  clearForecast,
   deviceDashboardReducer,
   selectChartData,
   selectChartLoadingStatus,
   selectChartType,
+  selectForecast,
   selectLatestVocIndex,
 };
