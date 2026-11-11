@@ -81,9 +81,9 @@ export const loadLatestVocIndex = createAsyncThunk<VocIndexModel, string>(
 
 export const loadForecast = createAsyncThunk<
   { forecast: ForecastResponseModel; fetchedAt: number },
-  string
->('device-dashboard/load-forecast', async (deviceId) => ({
-  forecast: await getForecastRequest(deviceId, 'co2_lstm_v1'),
+  { deviceId: string; model: string }
+>('device-dashboard/load-forecast', async ({ deviceId, model }) => ({
+  forecast: await getForecastRequest(deviceId, model),
   fetchedAt: Date.now(),
 }));
 

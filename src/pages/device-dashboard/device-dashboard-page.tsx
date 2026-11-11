@@ -38,6 +38,7 @@ import {
   loadIaqScoresForModules,
   selectScores,
 } from '@/store/slices/iaq-score.slice';
+import { selectSelectedModel } from '@/store/slices/models.slice';
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { IAQComponentsConfig } from '@/utils/iaq/iaq-components-config';
 import { theme } from '@/utils/theme';
@@ -65,6 +66,7 @@ const DeviceDashboardPage: FC = () => {
   const forecast = useAppSelector(selectForecast);
   const vocIndex = useAppSelector(selectLatestVocIndex);
   const scores = useAppSelector(selectScores);
+  const selectedModel = useAppSelector(selectSelectedModel);
 
   const { deviceId } = useParams<{ deviceId: string }>();
   const module = useAppSelector((state) =>
@@ -142,13 +144,14 @@ const DeviceDashboardPage: FC = () => {
     if (!module) {
       return;
     }
-    if (chartType === 'co2') {
-      void dispatch(loadForecast(module.device_id));
+    if (chartType === 'co2' && selectedModel) {
+      void dispatch(
+        loadForecast({ deviceId: module.device_id, model: selectedModel })
+      );
     } else {
-      console.log('here', chartType);
       dispatch(clearForecast());
     }
-  }, [chartType, module, dispatch]);
+  }, [chartType, module, selectedModel, dispatch]);
 
   const refreshDashboard = useCallback(() => {
     if (!module) {
@@ -163,16 +166,17 @@ const DeviceDashboardPage: FC = () => {
       })
     );
 
-    if (chartType === 'co2') {
-      void dispatch(loadForecast(module.device_id));
+    if (chartType === 'co2' && selectedModel) {
+      void dispatch(
+        loadForecast({ deviceId: module.device_id, model: selectedModel })
+      );
     } else {
-      console.log('here', chartType);
       dispatch(clearForecast());
     }
 
     void dispatch(loadLatestVocIndex(module._id));
     void dispatch(loadIaqScoresForModules([module.device_id]));
-  }, [chartTimeFilter, chartType, dispatch, module]);
+  }, [chartTimeFilter, chartType, dispatch, module, selectedModel]);
 
   useEffect(() => {
     const refreshWhenVisible = () => {
@@ -381,9 +385,6 @@ const DeviceDashboardPage: FC = () => {
                     hoursLookback: Number(value),
                   })
                 );
-                if (value === '2') {
-                  void dispatch(loadForecast(module.device_id));
-                }
               }
             }
           }}

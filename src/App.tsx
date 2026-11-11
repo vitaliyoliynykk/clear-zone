@@ -1,7 +1,7 @@
 import './App.css';
 
 import { Flex } from '@chakra-ui/react';
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Navigate, Route, Routes } from 'react-router';
 
 import { Toaster } from '@/components/ui/toaster';
@@ -11,6 +11,11 @@ import { ErrorPage } from './pages/error-page/error-page';
 import Layout from './shared/components/layout/layout-component';
 import ProtectedRoute from './shared/components/protected-route/protected-route';
 import { AuthProvider } from './shared/context/auth-provider';
+import {
+  SELECTED_MODEL_STORAGE_KEY,
+  selectSelectedModel,
+} from './store/slices/models.slice';
+import { useAppSelector } from './store/store';
 
 const SettingsPage = lazy(() => import('./pages/settings/settings-page'));
 const DeviceSettingsPage = lazy(
@@ -26,6 +31,16 @@ const DeviceDashboardPage = lazy(
 const DevicesPage = lazy(() => import('./pages/devices/devices-page'));
 
 function App() {
+  const selectedModel = useAppSelector(selectSelectedModel);
+
+  useEffect(() => {
+    if (selectedModel) {
+      localStorage.setItem(SELECTED_MODEL_STORAGE_KEY, selectedModel);
+    } else {
+      localStorage.removeItem(SELECTED_MODEL_STORAGE_KEY);
+    }
+  }, [selectedModel]);
+
   return (
     <AuthProvider>
       <Suspense
