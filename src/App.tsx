@@ -19,6 +19,7 @@ const DeviceSettingsPage = lazy(
 const SignInPage = lazy(() => import('./pages/sign-in/sign-in-page'));
 const RegisterPage = lazy(() => import('./pages/register/register-page'));
 const DashboardPage = lazy(() => import('./pages/dashboard/dashboard-page'));
+const ModelsPage = lazy(() => import('./pages/models/models-page'));
 const DeviceDashboardPage = lazy(
   () => import('./pages/device-dashboard/device-dashboard-page')
 );
@@ -58,6 +59,7 @@ function App() {
                 element={<DeviceDashboardPage />}
               />
               <Route path="settings" element={<SettingsPage />} />
+              <Route path="models" element={<ModelsPage />} />
               <Route
                 path="device-settings/:deviceId"
                 element={<DeviceSettingsPage />}
