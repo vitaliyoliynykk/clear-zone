@@ -5,6 +5,7 @@ import { connectModuleReducer } from './slices/connect-module.slice';
 import { deviceDashboardReducer } from './slices/device-dashboard.slice';
 import { devicesReducer } from './slices/devices';
 import { iaqScoreReducer } from './slices/iaq-score.slice';
+import { modelsReducer } from './slices/models.slice';
 import { settingsReducer } from './slices/settings-slice';
 import { userReducer } from './slices/user-slice';
 
@@ -15,6 +16,7 @@ const rootRedcuer = combineReducers({
   deviceDashboard: deviceDashboardReducer,
   iaqScore: iaqScoreReducer,
   settings: settingsReducer,
+  models: modelsReducer,
 });
 
 export const setupStore = (preloadedState?: Partial<RootState>) =>

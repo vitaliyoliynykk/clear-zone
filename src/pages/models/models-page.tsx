@@ -1,37 +1,23 @@
-import { Box, Container, Table } from '@chakra-ui/react';
-import type { FC } from 'react';
+import { Box, Container, Skeleton, Table, Text } from '@chakra-ui/react';
+import { type FC, useEffect } from 'react';
 
 import { PageHeading } from '@/shared/components/page-heading/page-heading-component';
-import type { ForecastingModelMetadata } from '@/shared/models/responses/forecasting-model-metadata-model';
-
-const mockModels: ForecastingModelMetadata[] = [
-  {
-    model_name: 'iaq_temperature_v1',
-    window_size: 144,
-    forecast_horizons_minutes: [15, 30, 60],
-    features: ['temperature', 'humidity', 'co2'],
-    num_params: 128_450,
-    test_metrics: {
-      temperature: { mse: 0.42, mae: 0.51, rmse: 0.65 },
-    },
-    unit: '°C',
-    target_value: 'temperature',
-  },
-  {
-    model_name: 'iaq_co2_v2',
-    window_size: 288,
-    forecast_horizons_minutes: [30, 60, 120],
-    features: ['co2', 'temperature', 'occupancy'],
-    num_params: 256_900,
-    test_metrics: {
-      co2: { mse: 84.2, mae: 6.7, rmse: 9.18 },
-    },
-    unit: 'ppm',
-    target_value: 'co2',
-  },
-];
+import {
+  loadModelsList,
+  selectModels,
+  selectModelsStatus,
+} from '@/store/slices/models.slice';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 
 const ModelsPage: FC = () => {
+  const dispatch = useAppDispatch();
+  const models = useAppSelector(selectModels);
+  const status = useAppSelector(selectModelsStatus);
+
+  useEffect(() => {
+    void dispatch(loadModelsList());
+  }, [dispatch]);
+
   return (
     <Container style={{ height: '100%' }}>
       <PageHeading>Forecasting Models</PageHeading>
@@ -50,30 +36,45 @@ const ModelsPage: FC = () => {
             </Table.Row>
           </Table.Header>
           <Table.Body>
-            {mockModels.map((model) => (
-              <Table.Row key={model.model_name}>
-                <Table.Cell>{model.model_name}</Table.Cell>
-                <Table.Cell>{model.target_value}</Table.Cell>
-                <Table.Cell>{model.unit}</Table.Cell>
-                <Table.Cell>{model.window_size}</Table.Cell>
-                <Table.Cell>
-                  {model.forecast_horizons_minutes.join(', ')}
-                </Table.Cell>
-                <Table.Cell>{model.features.join(', ')}</Table.Cell>
-                <Table.Cell>{model.num_params.toLocaleString()}</Table.Cell>
-                <Table.Cell>
-                  {Object.entries(model.test_metrics)
-                    .map(
-                      ([target, metrics]) =>
-                        `${target}: MSE ${metrics.mse.toString()}, MAE ${metrics.mae.toString()}, RMSE ${metrics.rmse.toString()} (${model.unit})`
-                    )
-                    .join('; ')}
-                </Table.Cell>
-              </Table.Row>
-            ))}
+            {status === 'loading'
+              ? Array.from({ length: 3 }, (_, rowIndex) => (
+                  <Table.Row key={rowIndex}>
+                    {Array.from({ length: 8 }, (_, cellIndex) => (
+                      <Table.Cell key={cellIndex}>
+                        <Skeleton height="20px" />
+                      </Table.Cell>
+                    ))}
+                  </Table.Row>
+                ))
+              : models.map((model) => (
+                  <Table.Row key={model.model_name}>
+                    <Table.Cell>{model.model_name}</Table.Cell>
+                    <Table.Cell>{model.target_value}</Table.Cell>
+                    <Table.Cell>{model.unit}</Table.Cell>
+                    <Table.Cell>{model.window_size}</Table.Cell>
+                    <Table.Cell>
+                      {model.forecast_horizons_minutes.join(', ')}
+                    </Table.Cell>
+                    <Table.Cell>{model.features.join(', ')}</Table.Cell>
+                    <Table.Cell>{model.num_params.toLocaleString()}</Table.Cell>
+                    <Table.Cell>
+                      {Object.entries(model.test_metrics)
+                        .map(
+                          ([target, metrics]) =>
+                            `${target}: MSE ${Math.round(metrics.mse).toString()}, MAE ${Math.round(metrics.mae).toString()}, RMSE ${Math.round(metrics.rmse).toString()} (${model.unit})`
+                        )
+                        .join('; ')}
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
           </Table.Body>
         </Table.Root>
       </Box>
+      {status === 'error' && (
+        <Text role="alert" mt={3}>
+          Unable to load forecasting models.
+        </Text>
+      )}
     </Container>
   );
 };
